@@ -11,7 +11,7 @@ import InsightSideAiIcon from "../../assets/images/Black&YellowAIIcon.svg";
 export default function Navbar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ width: "100%" }}>
+      <AppBar position="static" sx={{ width: "100%", borderRadius: 0 }}>
         <Toolbar>
           <Stack
             direction="row"
@@ -25,7 +25,7 @@ export default function Navbar() {
             <img
               src={logo}
               alt="Logo"
-              height={50}
+              height={40}
               style={{ marginLeft: "16px" }}
             />
 

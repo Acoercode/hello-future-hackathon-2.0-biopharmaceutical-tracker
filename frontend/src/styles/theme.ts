@@ -46,7 +46,7 @@ export const getDesignTokens = (mode: string) => ({
   components: {
     MuiPaper: {
       styleOverrides: {
-        root: { borderRadius: 4 },
+        root: { borderRadius: 15 },
       },
     },
     MuiSnackbarContent: {

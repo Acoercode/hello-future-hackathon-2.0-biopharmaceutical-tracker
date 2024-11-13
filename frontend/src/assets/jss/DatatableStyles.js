@@ -33,20 +33,20 @@ const datatableTheme = (mode) =>
       styleOverrides: {
         root: {
           "&:nth-of-type(odd)": {
-            backgroundColor: mode === "light" ? "#4168AE08" : "#373D3B",
+            backgroundColor: mode === "light" ? "#FFDB5808" : "#373D3B",
           },
           "&:hover": {
             backgroundColor:
-              mode === "light" ? "#00857715 !important" : "#265B5F !important",
+              mode === "light" ? "#FFDB5815 !important" : "#265B5F !important",
           },
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
-        root: {
-          padding: 5,
-        },
+        // root: {
+        //   padding: 5,
+        // },
         head: {
           fontWeight: "bold !important",
         },

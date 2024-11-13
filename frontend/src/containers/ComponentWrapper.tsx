@@ -2,7 +2,7 @@ import React from "react";
 
 // components and helpers
 import AppProvider from "./AppProviderWrapper";
-import Navbar from "../components/administrator/Navbar";
+import Navbar from "../components/shared/Navbar";
 
 // mui
 import Box from "@mui/material/Box";

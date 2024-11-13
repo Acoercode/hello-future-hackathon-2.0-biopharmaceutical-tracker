@@ -11,6 +11,11 @@ const datatableTheme = (mode) =>
         displayedRows: {
           margin: "0 !important",
         },
+        root: {
+          "& .MuiSvgIcon-root": {
+            color: "#FFDB58",
+          },
+        },
       },
     },
     MUIDataTableHeadCell: {
@@ -78,6 +83,9 @@ const datatableTheme = (mode) =>
         root: {
           paddingRight: "0px !important",
           paddingLeft: "0px !important",
+          "& .MuiSvgIcon-root": {
+            color: "#FFDB58",
+          },
         },
       },
     },

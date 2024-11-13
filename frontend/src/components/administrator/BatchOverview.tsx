@@ -147,6 +147,8 @@ const BatchOverview: React.FC = () => {
     ) => {
       console.log(rowData, rowMeta);
     },
+    viewColumns: false,
+    print: false,
   };
 
   return (
@@ -160,7 +162,7 @@ const BatchOverview: React.FC = () => {
             <Button
               variant={"contained"}
               sx={{ fontWeight: "bold" }}
-              startIcon={<AddIcon />}
+              startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
             >
               Create New Batch
             </Button>

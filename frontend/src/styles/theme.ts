@@ -71,13 +71,13 @@ export const getDesignTokens = (mode: string) => ({
     MuiButton: {
       styleOverrides: {
         outlinedPrimary: {
-          borderColor: mode === "light" ? "#0b0b0b" : "#fff",
-          color: mode === "light" ? "#0b0b0b" : "#fff",
+          borderColor: mode === "light" ? "#FFDB58" : "#fff",
+          color: mode === "light" ? "#FFDB58" : "#fff",
           textTransform: "none",
         },
         containedPrimary: {
           backgroundColor: mode === "light" ? "#FFDB58" : "#398377",
-          color: "#000",
+          color: "#0b0b0b",
           textTransform: "none",
         },
       },

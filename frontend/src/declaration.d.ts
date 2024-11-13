@@ -1,0 +1,12 @@
+declare module "react-router-dom";
+declare module "redux-debounced";
+declare module "redux";
+declare module "redux-thunk";
+declare module "react-redux";
+declare module "@reduxjs/toolkit";
+declare module "@mui/material/*";
+declare module "@mui/icons-material/*";
+declare module "moment/moment";
+declare module "*.png";
+declare module "*.mov";
+declare module "*.mp4";

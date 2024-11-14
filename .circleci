@@ -1,0 +1,26 @@
+version: '2.1'
+orbs:
+  aws-cli: circleci/aws-cli@5.1
+jobs:
+    build:
+        working_directory: ~/hello-future-hackathon-2.0-biopharmaceutical-tracker
+        steps:
+            - checkout
+            - setup_remote_docker
+            - run:
+                  name: Check AWS CLI
+                  command: aws --version
+            - run:
+                  name: Build
+                  command: cd frontend && make build && cd ..
+
+workflows:
+    version: 2
+    build:
+        jobs:
+            - build:
+                  context:
+                      - ACOER
+                  filters:
+                      branches:
+                          only: main

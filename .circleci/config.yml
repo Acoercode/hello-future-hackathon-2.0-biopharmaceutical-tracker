@@ -8,6 +8,8 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
+      - aws-cli/setup:
+          profile_name: default
       - setup_remote_docker
       - run:
           name: Check AWS CLI

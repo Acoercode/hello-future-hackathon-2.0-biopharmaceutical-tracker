@@ -5,6 +5,7 @@ jobs:
   build:
     docker:
       - image: cimg/base:2023.03
+    executor: aws-cli/default
     steps:
       - checkout
       - setup_remote_docker

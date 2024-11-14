@@ -1,4 +1,5 @@
 build:
+	aws s3 ls s3://hedera-biopharmaceutical-tracker.acoerlabs.com/
 	npm i --legacy-peer-deps
 	npm run build
 	aws s3 rm s3://hedera-biopharmaceutical-tracker.acoerlabs.com/ --recursive

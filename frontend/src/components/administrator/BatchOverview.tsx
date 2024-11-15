@@ -1,5 +1,6 @@
 import React from "react";
 import MUIDataTable from "mui-datatables";
+import { useNavigate } from "react-router-dom";
 
 // components and helpers
 import { IconCount } from "./IconCount";
@@ -10,6 +11,8 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 
 const BatchOverview: React.FC = () => {
+  const navigate = useNavigate();
+
   const statusData = [
     {
       title: "Total Batches",
@@ -145,7 +148,7 @@ const BatchOverview: React.FC = () => {
       rowData: string[],
       rowMeta: { dataIndex: number; rowIndex: number },
     ) => {
-      console.log(rowData, rowMeta);
+      navigate(`/admin/batch/${rowData[0]}`);
     },
     viewColumns: false,
     print: false,
@@ -163,6 +166,7 @@ const BatchOverview: React.FC = () => {
               variant={"contained"}
               sx={{ fontWeight: "bold" }}
               startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
+              onClick={() => navigate("/admin/create")}
             >
               Create New Batch
             </Button>

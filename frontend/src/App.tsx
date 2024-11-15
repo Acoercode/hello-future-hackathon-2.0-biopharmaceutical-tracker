@@ -9,6 +9,8 @@ import { getDesignTokens } from "./styles/theme";
 import { defaultStore } from "./store/defaultStore";
 import { Provider } from "react-redux";
 import AdminBatchOverviewView from "./views/AdminBatchOverviewView";
+import AdminBatchDetailView from "./views/AdminBatchDetailView";
+import AdminCreateBatchView from "./views/AdminCreateBatchView";
 
 function App() {
   const initialModeState: string | (() => string) = "light";
@@ -26,6 +28,16 @@ function App() {
         <ThemeProvider theme={theme}>
           <Routes>
             <Route exact path="/" element={<AdminBatchOverviewView />} />
+            <Route
+              exact
+              path="/admin/create"
+              element={<AdminCreateBatchView />}
+            />
+            <Route
+              exact
+              path="/admin/batch/:id"
+              element={<AdminBatchDetailView />}
+            />
           </Routes>
         </ThemeProvider>
       </Provider>

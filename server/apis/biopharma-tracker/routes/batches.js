@@ -143,7 +143,7 @@ router.get("/:batchId/qr-code", async (req, res, next) => {
             brand: batch.brand
         };
         const qrImage = await generate(qrData)
-        res.send(`<img src="${qrImage}" alt="QR Code"/>`);
+        res.send(qrImage);
 
         // Create QR Code
     } catch (e) {

@@ -69,6 +69,51 @@ router.post("/", async (req, res, next) => {
     });
 });
 
+router.get("/list", async (req, res, next) => {
+    const { limit = 10, skip = 0, sort, direction } = req.query;
+
+    try {
+        await mongodb.connect();
+
+        const [{ total: [total = 0], edges }] = await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .aggregate([
+                {
+                    $facet: {
+                      total: [
+                        { $group: { _id: null, count: { $sum: 1 } } },
+                      ],
+                      edges: [
+                        // { $sort: sort },
+                        { $skip: skip },
+                        { $limit: limit },
+                      ],
+                    },
+                  },
+                  {
+                    $project: {
+                      total: '$total.count',
+                      edges: '$edges',
+                    },
+                }
+            ]).toArray();
+
+            return res.status(200).json({
+                total,
+                items: edges
+            });
+
+        // Create QR Code
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+
+});
+
 router.get("/:batchId", async (req, res, next) => {
 
     const { batchId } = req.params;
@@ -137,10 +182,12 @@ router.get("/:batchId/qr-code", async (req, res, next) => {
 
         const qrData = {
             id: batch._id,
+            brand: batch.brand,
             productId: batch.productId,
             productType: batch.productType,
+            batchNumber: batch.batchNumber,
             expirationDate: batch.expirationDate,
-            brand: batch.brand
+            numberOfItems: batch.numberOfItems,
         };
         const qrImage = await generate(qrData)
         res.send(qrImage);
@@ -156,8 +203,6 @@ router.get("/:batchId/qr-code", async (req, res, next) => {
 });
 
 
-router.get("/list", async (req, res, next) => {
 
-});
 
 module.exports = router;

@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const API_KEY = process.env.HASHLOG_API_KEY || "hbar_mk_vTnMts1ghaU96sULBWtg4y10jdLFuiKCaO5x785YZp9NO5bv"
 
-const stampData = async (payload, type) => {
+const stampData = async (payload, type, action) => {
 
     const md5sum = crypto.createHash('md5');
     const hash = md5sum.update(JSON.stringify(payload)).digest('hex')
@@ -13,7 +13,7 @@ const stampData = async (payload, type) => {
         .post("https://external.hashlog.io/event")
         .set("APIKey", API_KEY)
         .send({
-            data: JSON.stringify({ hash, type })
+            data: JSON.stringify({ hash, type, action })
         });
 
     // Return the stamp

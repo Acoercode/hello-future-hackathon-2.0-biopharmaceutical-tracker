@@ -70,7 +70,11 @@ router.post("/", async (req, res, next) => {
 });
 
 router.get("/list", async (req, res, next) => {
-    const { limit = 10, skip = 0, sort, direction } = req.query;
+    const { limit = 10, skip = 0, sort = "expirationDate", direction = "ASC" } = req.query;
+
+    const sortOp = {
+        [sort]: direction === "ASC" ? 1 : -1
+    }
 
     try {
         await mongodb.connect();
@@ -85,9 +89,9 @@ router.get("/list", async (req, res, next) => {
                         { $group: { _id: null, count: { $sum: 1 } } },
                       ],
                       edges: [
-                        // { $sort: sort },
-                        { $skip: skip },
-                        { $limit: limit },
+                        { $sort: sortOp },
+                        { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
+                        { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
                       ],
                     },
                   },
@@ -101,6 +105,7 @@ router.get("/list", async (req, res, next) => {
 
             return res.status(200).json({
                 total,
+                pageSize: edges.length,
                 items: edges
             });
 

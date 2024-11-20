@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 require("../schemas/batch");
-const stampData = require("../stamp");
+const stampData = require("../services/stamp");
 const getDb = require("../db");
 const generate = require("../qrCode");
+const { createItems } = require("../services/items");
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -42,7 +43,7 @@ router.post("/", async (req, res, next) => {
     const payload = req.body;
     console.log('Payload!', payload);
 
-    const stamp = await stampData(payload, COLLECTION);
+    const stamp = await stampData(payload, COLLECTION, 'CREATE');
     console.log('Data stamped!');
     let batch = { ...payload };
     batch._id = stamp._id;
@@ -57,6 +58,7 @@ router.post("/", async (req, res, next) => {
             .collection(COLLECTION)
             .insertOne(batch);
         console.log('Batch created!')
+        await createItems(batch._id, batch.numberOfItems)
     } catch (e) {
         console.log(e);
     } finally {

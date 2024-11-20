@@ -41,7 +41,7 @@ router.post("/", async (req, res, next) => {
 
         batch = await mongodb
             .db("biopharma-tracker")
-            .collection("batches")
+            .collection(type)
             .updateOne({ _id: batch._id}, { "$set": {
                 stamp: payload
             }});

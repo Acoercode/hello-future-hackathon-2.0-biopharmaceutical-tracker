@@ -1,1 +1,0 @@
-const getDb = require("../db");

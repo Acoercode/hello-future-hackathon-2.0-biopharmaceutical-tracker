@@ -5,6 +5,7 @@ const qrCode = require("qrcode");
 const swaggerSpecs = require("./swagger");
 
 const batchRouter = require("./routes/batches");
+const itemsRouter = require("./routes/items");
 const stampRouter = require("./routes/notifications")
 
 
@@ -18,6 +19,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use('/batches', batchRouter);
+app.use('/batches/:batchId/items', itemsRouter);
 app.use('/stamp', stampRouter);
 
 // Swagger

@@ -62,40 +62,7 @@ router.get("/predict", async (req, res, next) => {
     stockData.forEach((row) => {
       stockDataText += `${row.date}: ${row.stockLevel} units available\n`;
     });
-
-    /*const prompt = `
-      Analyze the following stock data and predict when manufacturing should restart. 
-      Consider a safety stock level of ${safetyStock} units and a manufacturng delay of ${manufacturingDelay} days.
-      
-      Here is the stock data for the last 30 days:
-      ${stockDataText}
-
-      The stock depletion rate should be base on the last 30 days.
-      Then, compute the number of days that we have before hittig the safety stock level.
-      Base your prediction on the stock depletion rate, and the current stock which is ${stockData[stockData.length - 1].stockLevel}.
-
-      The "recommendedRestartDate" should contain the date when the manufacturing should restart using the format "YYYY-MM-DD".
-    `;
-
-    const Prediction = z.object({
-      recommendedRestartDate: z.string(),
-      reasoning: z.string(),
-      currentStockDepletionRate: z.number(),
-    });
-
-    const completion = await openai.beta.chat.completions.parse({
-      model: "gpt-4o-2024-08-06",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful assistant for stock analysis.",
-        },
-        { role: "user", content: prompt },
-      ],
-      response_format: zodResponseFormat(Prediction, "prediction"),
-    });
-
-    return res.status(200).json(completion.choices[0].message.parsed);*/
+    
     const prompt = `
     Analyze the following stock data and predict when manufacturing should restart. 
     Consider a safety stock level of ${safetyStock} units and a manufacturng delay of ${manufacturingDelay} days.

@@ -14,6 +14,9 @@ const utils = {
   },
   splitCamelcaseString: (string: string) =>
     string.replace(/([a-z0-9])([A-Z])/g, "$1 $2"),
+  capsToTitleCase: (str: string) => {
+    return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+  },
 };
 
 export default utils;

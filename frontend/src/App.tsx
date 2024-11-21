@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import AdminBatchOverviewView from "./views/AdminBatchOverviewView";
 import AdminBatchDetailView from "./views/AdminBatchDetailView";
 import AdminCreateBatchView from "./views/AdminCreateBatchView";
+import type {} from "redux-thunk/extend-redux";
 
 function App() {
   const initialModeState: string | (() => string) = "light";

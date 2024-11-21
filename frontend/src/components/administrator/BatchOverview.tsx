@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MUIDataTable from "mui-datatables";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
 import { IconCount } from "./IconCount";
+import { adminActions } from "./AdminActions";
+import utils from "../../utils/utils";
 
 // mui
 import Grid from "@mui/material/Grid2";
@@ -12,6 +15,12 @@ import AddIcon from "@mui/icons-material/Add";
 
 const BatchOverview: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const batchList = useSelector((state: any) => state.admin.batchList);
+
+  useEffect(() => {
+    dispatch(adminActions?.getBatchList());
+  }, []);
 
   const statusData = [
     {
@@ -36,6 +45,15 @@ const BatchOverview: React.FC = () => {
 
   const columns = [
     {
+      name: "_id",
+      label: "ID",
+      options: {
+        filter: false,
+        sort: false,
+        display: false,
+      },
+    },
+    {
       name: "productId",
       label: "Product ID",
       options: {
@@ -49,6 +67,13 @@ const BatchOverview: React.FC = () => {
       options: {
         filter: true,
         sort: false,
+        customBodyRender: (value: string) => {
+          if (value) {
+            return utils.capsToTitleCase(value);
+          } else {
+            return "Pending Status...";
+          }
+        },
       },
     },
     {
@@ -57,6 +82,13 @@ const BatchOverview: React.FC = () => {
       options: {
         filter: true,
         sort: false,
+        customBodyRender: (value: string) => {
+          if (value) {
+            return utils.capsToTitleCase(value);
+          } else {
+            return "Pending Status...";
+          }
+        },
       },
     },
     {
@@ -67,9 +99,17 @@ const BatchOverview: React.FC = () => {
         sort: false,
       },
     },
+    // {
+    //   name: "batchNumber",
+    //   label: "Batch Number",
+    //   options: {
+    //     filter: true,
+    //     sort: false,
+    //   },
+    // },
     {
-      name: "batchNumber",
-      label: "Batch Number",
+      name: "numberOfItems",
+      label: "Number of Units",
       options: {
         filter: true,
         sort: false,
@@ -90,54 +130,6 @@ const BatchOverview: React.FC = () => {
         filter: true,
         sort: false,
       },
-    },
-  ];
-
-  const data = [
-    {
-      productId: "1234567",
-      status: "Administered",
-      productType: "Abcde",
-      brand: "Fghijk",
-      batchNumber: "123456",
-      expirationDate: "2025-12-31",
-      trust: "Yes",
-    },
-    {
-      productId: "1234567",
-      status: "QA - Passed",
-      productType: "Abcde",
-      brand: "Fghijk",
-      batchNumber: "123456",
-      expirationDate: "2025-12-31",
-      trust: "Yes",
-    },
-    {
-      productId: "1234567",
-      status: "QC - Pending",
-      productType: "Abcde",
-      brand: "Fghijk",
-      batchNumber: "123456",
-      expirationDate: "2025-12-31",
-      trust: "Yes",
-    },
-    {
-      productId: "1234567",
-      status: "Administered",
-      productType: "Abcde",
-      brand: "Fghijk",
-      batchNumber: "123456",
-      expirationDate: "2025-12-31",
-      trust: "Yes",
-    },
-    {
-      productId: "1234567",
-      status: "Received",
-      productType: "Abcde",
-      brand: "Fghijk",
-      batchNumber: "123456",
-      expirationDate: "2025-12-31",
-      trust: "Yes",
     },
   ];
 
@@ -171,7 +163,7 @@ const BatchOverview: React.FC = () => {
               Create New Batch
             </Button>
           }
-          data={data}
+          data={batchList && batchList.items}
           columns={columns}
           options={options}
         />

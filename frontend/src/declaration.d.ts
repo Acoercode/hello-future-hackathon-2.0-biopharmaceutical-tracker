@@ -8,6 +8,7 @@ declare module "@mui/material/*";
 declare module "@mui/icons-material/*";
 declare module "moment/*";
 declare module "mui-datatables";
+declare module "redux-thunk/extend-redux";
 declare module "*.png";
 declare module "*.mov";
 declare module "*.mp4";

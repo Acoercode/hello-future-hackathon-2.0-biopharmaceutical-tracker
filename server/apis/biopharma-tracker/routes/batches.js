@@ -5,6 +5,7 @@ const stampData = require("../services/stamp");
 const getDb = require("../db");
 const generate = require("../qrCode");
 const { createItems } = require("../services/items");
+const { getBatch, addActivity, updateBatch, addBatch } = require("../services/batches");
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -71,6 +72,24 @@ router.post("/", async (req, res, next) => {
     });
 });
 
+router.post("/:batchId/activity", async (req, res, next) => {
+    const { batchId } = req.params;
+    const batch = await getBatch(batchId);
+
+    if (batch) {
+        const payload = req.body;
+        const updatedBatch = await addActivity(batch, payload);
+        const stamp = await stampData(updatedBatch, COLLECTION, payload.status);
+        const stamped = await updateBatch(batchId, { stamp });
+        console.log('Stamped batch', stamped);
+        return res.status(200).json(stamped);
+    } else {
+        return res.status(404).json({
+            error: 'Batch not found'
+        });
+    }
+});
+
 router.get("/list", async (req, res, next) => {
     const { limit = 10, skip = 0, sort = "expirationDate", direction = "ASC" } = req.query;
 
@@ -124,38 +143,15 @@ router.get("/list", async (req, res, next) => {
 router.get("/:batchId", async (req, res, next) => {
 
     const { batchId } = req.params;
+    const batch = await getBatch(batchId);
 
-    console.log('Batch ID', batchId);
-
-    try {
-
-        console.log('Looking batch up');
-        await mongodb.connect();
-
-        console.log('Connected to DB');
-
-        const batch = await mongodb
-            .db("biopharma-tracker")
-            .collection(COLLECTION)
-            .findOne({ _id: batchId });
-
-        console.log('Batch', batch);
-
-        if (!batch) {
-            return res.status(404).json({
-                error: 'Batch not found'
-            });
-        }
-
+    if(batch) {
         return res.status(200).json(batch);
-
-        // Create QR Code
-    } catch (e) {
-        console.log(e);
-    } finally {
-        // Ensures that the client will close when you finish/error
-        if (mongodb) await mongodb.close();
     }
+
+    return res.status(404).json({
+        error: 'Batch not found'
+    });
 });
 
 /**

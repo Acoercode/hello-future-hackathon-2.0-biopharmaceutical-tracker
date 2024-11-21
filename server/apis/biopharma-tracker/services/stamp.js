@@ -6,8 +6,13 @@ const API_KEY = process.env.HASHLOG_API_KEY || "hbar_mk_vTnMts1ghaU96sULBWtg4y10
 
 const stampData = async (payload, type, action) => {
 
+    let toStamp = {
+        ...payload
+    };
+    delete toStamp['stamp'];
+
     const md5sum = crypto.createHash('md5');
-    const hash = md5sum.update(JSON.stringify(payload)).digest('hex')
+    const hash = md5sum.update(JSON.stringify(toStamp)).digest('hex')
     // Call the stamping API
     let stamp = await superagent
         .post("https://external.hashlog.io/event")

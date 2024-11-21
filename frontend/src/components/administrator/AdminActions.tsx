@@ -1,5 +1,5 @@
-import { ActionCreator, ActionCreatorsMapObject, Dispatch } from "redux";
-import { ThunkAction } from "redux-thunk";
+// import { ActionCreator, ActionCreatorsMapObject, Dispatch } from "redux";
+// import { ThunkAction } from "redux-thunk";
 import axios from "axios";
 import { IAdminAction, IAdminState } from "../../common/model/AdminModels";
 

@@ -7,8 +7,6 @@ import Navbar from "../components/shared/Navbar";
 // mui
 import Box from "@mui/material/Box";
 import { CssBaseline } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
 
 function ComponentWrapper<T>(
   WrappedComponent: React.ComponentType<T>,

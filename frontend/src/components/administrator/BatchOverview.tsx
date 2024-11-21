@@ -20,6 +20,7 @@ const BatchOverview: React.FC = () => {
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const statusData = [

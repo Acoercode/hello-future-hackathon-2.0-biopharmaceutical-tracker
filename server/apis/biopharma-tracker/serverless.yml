@@ -1,12 +1,12 @@
 org: acoer
 app: biopharma-tracker-functions
 service: biopharma-tracker
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 20
+  timeout: 60
 
 functions:
   api:

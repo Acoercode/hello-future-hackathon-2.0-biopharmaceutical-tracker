@@ -7,7 +7,7 @@ const swaggerSpecs = require("./swagger");
 const batchRouter = require("./routes/batches");
 const itemsRouter = require("./routes/items");
 const stampRouter = require("./routes/notifications")
-
+const aiRouter = require("./routes/ai")
 
 const app = express();
 app.use(express.json())
@@ -21,6 +21,7 @@ app.get("/", (req, res, next) => {
 app.use('/batches', batchRouter);
 app.use('/batches/:batchId/items', itemsRouter);
 app.use('/stamp', stampRouter);
+app.use('/ai', aiRouter);
 
 // Swagger
 app.use('/api-docs', swaggerUi.serve);

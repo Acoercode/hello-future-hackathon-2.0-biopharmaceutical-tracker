@@ -12,8 +12,12 @@ import utils from "../../utils/utils";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import Typography from "@mui/material/Typography";
 
-const BatchOverview: React.FC = () => {
+interface BatchItemsListProps {
+  items: any;
+}
+const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const batchList = useSelector((state: any) => state.admin.batchList);
@@ -22,27 +26,6 @@ const BatchOverview: React.FC = () => {
     dispatch(adminActions?.getBatchList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const statusData = [
-    {
-      title: "Total Batches",
-      color: "#0b0b0b",
-      data: 200,
-      image: "https://placehold.co/400",
-    },
-    {
-      title: "Active Batches",
-      color: "#0b0b0b",
-      data: 100,
-      image: "https://placehold.co/400",
-    },
-    {
-      title: "Inactive Batches",
-      color: "#0b0b0b",
-      data: 100,
-      image: "https://placehold.co/400",
-    },
-  ];
 
   const columns = [
     {
@@ -55,8 +38,8 @@ const BatchOverview: React.FC = () => {
       },
     },
     {
-      name: "productId",
-      label: "Product ID",
+      name: "itemNumber",
+      label: "Item Number",
       options: {
         filter: true,
         sort: false,
@@ -78,58 +61,22 @@ const BatchOverview: React.FC = () => {
       },
     },
     {
-      name: "productType",
-      label: "Product Type",
-      options: {
-        filter: true,
-        sort: false,
-        customBodyRender: (value: string) => {
-          if (value) {
-            return utils.capsToTitleCase(value);
-          } else {
-            return "Pending Status...";
-          }
-        },
-      },
-    },
-    {
-      name: "brand",
-      label: "Brand",
-      options: {
-        filter: true,
-        sort: false,
-      },
-    },
-    // {
-    //   name: "batchNumber",
-    //   label: "Batch Number",
-    //   options: {
-    //     filter: true,
-    //     sort: false,
-    //   },
-    // },
-    {
-      name: "numberOfItems",
-      label: "Number of Units",
-      options: {
-        filter: true,
-        sort: false,
-      },
-    },
-    {
-      name: "expirationDate",
-      label: "Expiration Date",
-      options: {
-        filter: true,
-        sort: false,
-      },
-    },
-    {
       name: "trust",
       label: "Trust",
       options: {
         filter: true,
         sort: false,
+      },
+    },
+    {
+      name: "itemTracking",
+      label: "Item Tracking",
+      options: {
+        filter: true,
+        sort: false,
+        customBodyRender: (value: string) => {
+          return "View Details";
+        },
       },
     },
   ];
@@ -141,30 +88,27 @@ const BatchOverview: React.FC = () => {
       rowData: string[],
       rowMeta: { dataIndex: number; rowIndex: number },
     ) => {
-      navigate(`/admin/batch/${rowData[0]}`);
+      console.log("ROW CLICK");
+      // navigate(`/admin/batch/${rowData[0]}`);
     },
+    rowsPerPage: 5,
+    rowsPerPageOptions: [5],
     viewColumns: false,
     print: false,
   };
 
+  console.log("ITEMS", items);
+
   return (
     <Grid container justifyContent={"center"} spacing={3}>
-      {statusData.map((data, i) => (
-        <IconCount count={data} data={data.data} width={4} key={`count-${i}`} />
-      ))}
       <Grid size={12}>
         <MUIDataTable
           title={
-            <Button
-              variant={"contained"}
-              sx={{ fontWeight: "bold" }}
-              startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
-              onClick={() => navigate("/admin/create")}
-            >
-              Create New Batch
-            </Button>
+            <Typography variant={"h6"} sx={{ fontWeight: "bold", pl: 1 }}>
+              Item Details
+            </Typography>
           }
-          data={batchList && batchList.items}
+          data={items && items.items}
           columns={columns}
           options={options}
         />
@@ -173,4 +117,4 @@ const BatchOverview: React.FC = () => {
   );
 };
 
-export default BatchOverview;
+export default BatchItemsList;

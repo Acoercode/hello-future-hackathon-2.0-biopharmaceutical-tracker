@@ -172,11 +172,11 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
             alignItems={"center"}
           >
             <Grid size={"auto"}>
-              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+              <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
                 {title}
               </Typography>
               <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
-                {details && details.productId}
+                # {details && details.productId}
               </Typography>
             </Grid>
             <Grid size={"auto"}>

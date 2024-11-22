@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 
 interface BatchDetailsPanelProps {
   details: any;
@@ -55,7 +56,9 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
               </Typography>
             </Grid>
             <Grid size={"auto"}>
-              <Button variant={"outlined"}>Master QR Code</Button>
+              <Button variant={"outlined"} startIcon={<QrCodeIcon />}>
+                Master QR Code
+              </Button>
             </Grid>
           </Grid>
         </Grid>

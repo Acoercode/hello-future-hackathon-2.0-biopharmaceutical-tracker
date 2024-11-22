@@ -9,10 +9,14 @@ import utils from "../../utils/utils";
 // mui
 import Grid from "@mui/material/Grid2";
 import Typography from "@mui/material/Typography";
+import { Tooltip } from "@mui/material";
+import Button from "@mui/material/Button";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 
 interface BatchItemsListProps {
   items: any;
 }
+
 const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
   const dispatch = useDispatch();
 
@@ -35,7 +39,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
       name: "itemNumber",
       label: "Item Number",
       options: {
-        filter: true,
+        filter: false,
         sort: false,
       },
     },
@@ -58,7 +62,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
       name: "trust",
       label: "Trust",
       options: {
-        filter: true,
+        filter: false,
         sort: false,
       },
     },
@@ -66,7 +70,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
       name: "itemTracking",
       label: "Item Tracking",
       options: {
-        filter: true,
+        filter: false,
         sort: false,
         customBodyRender: (value: string) => {
           return "View Details";
@@ -89,9 +93,16 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
     rowsPerPageOptions: [5],
     viewColumns: false,
     print: false,
+    customToolbar: () => {
+      return (
+        <React.Fragment>
+          <Button startIcon={<QrCodeIcon />} variant={"outlined"}>
+            Item QR Codes
+          </Button>
+        </React.Fragment>
+      );
+    },
   };
-
-  console.log("ITEMS", items);
 
   return (
     <Grid container justifyContent={"center"} spacing={3}>

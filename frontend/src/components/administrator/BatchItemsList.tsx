@@ -9,7 +9,6 @@ import utils from "../../utils/utils";
 // mui
 import Grid from "@mui/material/Grid2";
 import Typography from "@mui/material/Typography";
-import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 

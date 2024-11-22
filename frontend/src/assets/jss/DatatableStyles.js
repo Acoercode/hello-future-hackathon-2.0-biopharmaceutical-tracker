@@ -49,9 +49,9 @@ const datatableTheme = (mode) =>
     },
     MuiTableCell: {
       styleOverrides: {
-        // root: {
-        //   padding: 5,
-        // },
+        footer: {
+          padding: 0,
+        },
         head: {
           fontWeight: "bold !important",
         },

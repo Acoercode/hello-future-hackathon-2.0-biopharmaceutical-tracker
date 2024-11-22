@@ -66,7 +66,7 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
           <Divider color={"#fff"} />
         </Grid>
         <Grid size={12}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} justifyContent={"space-evenly"}>
             {renderValues()}
           </Grid>
         </Grid>

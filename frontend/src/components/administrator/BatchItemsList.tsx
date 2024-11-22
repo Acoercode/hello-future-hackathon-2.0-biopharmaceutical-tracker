@@ -1,26 +1,20 @@
 import React, { useEffect } from "react";
 import MUIDataTable from "mui-datatables";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // components and helpers
-import { IconCount } from "./IconCount";
 import { adminActions } from "./AdminActions";
 import utils from "../../utils/utils";
 
 // mui
 import Grid from "@mui/material/Grid2";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 
 interface BatchItemsListProps {
   items: any;
 }
 const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const batchList = useSelector((state: any) => state.admin.batchList);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());

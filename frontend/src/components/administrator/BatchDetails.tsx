@@ -5,8 +5,6 @@ import { useParams } from "react-router-dom";
 
 // mui
 import Grid from "@mui/material/Grid2";
-import { useNavigate } from "react-router-dom";
-import Paper from "@mui/material/Paper";
 import { useDispatch, useSelector } from "react-redux";
 import { adminActions } from "./AdminActions";
 import TrackingPanel from "./TrackingPanel";
@@ -15,7 +13,6 @@ import BatchItemsList from "./BatchItemsList";
 import DetailsMapPanel from "./DetailsMapPanel";
 
 const BatchDetails: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
   const batchDetails = useSelector((state: any) => state.admin.batchDetails);
@@ -26,7 +23,8 @@ const BatchDetails: React.FC = () => {
     dispatch(adminActions?.getBatchDetails(id));
     dispatch(adminActions?.getBatchItems(id));
     // dispatch(adminActions?.getBatchActivity(id));
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // console.log("batchDetails", batchDetails);
   // console.log("batchItems", batchItems);

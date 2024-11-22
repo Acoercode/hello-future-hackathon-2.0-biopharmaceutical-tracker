@@ -79,7 +79,7 @@ const QontoStepIconRoot = styled("div")<{
 }));
 
 function QontoStepIcon(props: StepIconProps, index: number) {
-  const { active, completed, className } = props;
+  const { active, className } = props;
 
   return (
     <QontoStepIconRoot

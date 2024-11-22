@@ -5,7 +5,6 @@ import ComponentWrapper from "../containers/ComponentWrapper";
 
 // mui
 import Grid from "@mui/material/Grid2";
-import BatchOverview from "../components/administrator/BatchOverview";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import controlIcon from "../assets/images/Control.svg";

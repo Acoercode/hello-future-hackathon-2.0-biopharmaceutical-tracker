@@ -29,7 +29,66 @@ export const adminReducer: Reducer<IWorkspaceState, IWorkspaceAction> = (
         batchListError: action.error,
       };
     }
-
+    case types.GET_BATCH_DETAILS_REQUEST: {
+      return {
+        ...state,
+        batchDetailsLoading: true,
+      };
+    }
+    case types.GET_BATCH_DETAILS_SUCCESS: {
+      return {
+        ...state,
+        batchDetailsLoading: false,
+        batchDetails: action.payload?.data,
+      };
+    }
+    case types.GET_BATCH_DETAILS_FAILURE: {
+      return {
+        ...state,
+        batchDetailsLoading: false,
+        batchDetailsError: action.error,
+      };
+    }
+    case types.GET_BATCH_ITEMS_REQUEST: {
+      return {
+        ...state,
+        batchItemsLoading: true,
+      };
+    }
+    case types.GET_BATCH_ITEMS_SUCCESS: {
+      return {
+        ...state,
+        batchItemsLoading: false,
+        batchItems: action.payload?.data,
+      };
+    }
+    case types.GET_BATCH_ITEMS_FAILURE: {
+      return {
+        ...state,
+        batchItemsLoading: false,
+        batchItemsError: action.error,
+      };
+    }
+    case types.GET_BATCH_ACTIVITY_REQUEST: {
+      return {
+        ...state,
+        batchActivityLoading: true,
+      };
+    }
+    case types.GET_BATCH_ACTIVITY_SUCCESS: {
+      return {
+        ...state,
+        batchActivityLoading: false,
+        batchActivity: action.payload?.data,
+      };
+    }
+    case types.GET_BATCH_ACTIVITY_FAILURE: {
+      return {
+        ...state,
+        batchActivityLoading: false,
+        batchActivityError: action.error,
+      };
+    }
     default:
       return state;
   }

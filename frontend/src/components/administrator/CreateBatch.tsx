@@ -57,7 +57,7 @@ const CreateBatch: React.FC = () => {
               <Typography variant={"h6"}>Batch Details</Typography>
             </Grid>
             {createBatchInputs().map((input, index) => (
-              <Grid size={4}>
+              <Grid size={4} key={`create-inputs-${index}`}>
                 <Typography>{input.name}</Typography>
                 <TextField
                   id="outlined-basic"

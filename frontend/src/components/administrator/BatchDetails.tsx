@@ -31,7 +31,7 @@ const BatchDetails: React.FC = () => {
   // console.log("batchActivity", batchActivity);
 
   return (
-    <Grid container justifyContent={"center"} spacing={2}>
+    <Grid container justifyContent={"center"} spacing={2} sx={{ mb: 2 }}>
       <Grid size={3.5}>
         <TrackingPanel details={batchDetails} title={"Batch Tracking"} />
       </Grid>

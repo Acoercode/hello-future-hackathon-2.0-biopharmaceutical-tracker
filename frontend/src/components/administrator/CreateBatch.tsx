@@ -10,6 +10,8 @@ import Paper from "@mui/material/Paper";
 import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { adminActions } from "./AdminActions";
+import { useDispatch } from "react-redux";
 
 interface BatchDetails {
   productId: string;
@@ -21,6 +23,7 @@ interface BatchDetails {
 
 const CreateBatch: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [batchDetails, setBatchDetails] = React.useState<BatchDetails>({
     productId: "",
     productType: "",
@@ -41,6 +44,7 @@ const CreateBatch: React.FC = () => {
 
   const handleSubmit = () => {
     console.log("submit", batchDetails);
+    dispatch(adminActions?.createBatch(batchDetails));
     navigate(`/admin/batch/${batchDetails.productId}`);
   };
 

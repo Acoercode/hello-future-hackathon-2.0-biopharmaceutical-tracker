@@ -72,7 +72,7 @@ const BatchOverview: React.FC = () => {
           if (value) {
             return utils.capsToTitleCase(value);
           } else {
-            return "Pending Status...";
+            return "Pending Status";
           }
         },
       },

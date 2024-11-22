@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import controlIcon from "../assets/images/Control.svg";
 import { useNavigate } from "react-router-dom";
+import BatchDetails from "../components/administrator/BatchDetails";
 
 const AdminBatchDetailView: React.FC = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const AdminBatchDetailView: React.FC = () => {
         </Stack>
       </Grid>
       <Grid size={11}>
-        <BatchOverview />
+        <BatchDetails />
       </Grid>
     </Grid>
   );

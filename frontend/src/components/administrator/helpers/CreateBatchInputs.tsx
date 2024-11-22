@@ -29,4 +29,10 @@ export const createBatchInputs = () => [
     type: "number",
     placeholder: "Enter Number of Items in Batch",
   },
+  {
+    name: "Expiration Date",
+    id: "expirationDate",
+    type: "text",
+    placeholder: "YYYY/MM/DD",
+  },
 ];

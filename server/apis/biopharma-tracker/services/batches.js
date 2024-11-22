@@ -1,4 +1,5 @@
 const getDb = require("../db");
+const { createItems } = require("./items");
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const mongodb = getDb();
@@ -24,14 +25,26 @@ const updateBatch = async (batchId, payload) => {
     } 
 };
 
-const addBatch = async (payload) => {
-
+const addBatch = async (batch) => {
+    try {
+        await mongodb.connect();
+        await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .insertOne(batch);
+        console.log('Batch created!', batch._id)
+        await createItems(batch._id, batch.numberOfItems)
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
 };
 
 const addActivity = async (batch, activity) => {
     try {
         await mongodb.connect();
-        const test = [];
         const activities = batch.activities || [];
         activities.push({
             ...activity,

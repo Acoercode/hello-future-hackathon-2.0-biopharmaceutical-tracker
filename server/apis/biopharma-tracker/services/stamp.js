@@ -1,4 +1,3 @@
-
 const superagent = require('superagent');
 const crypto = require('crypto');
 

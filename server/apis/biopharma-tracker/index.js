@@ -1,7 +1,7 @@
 const serverless = require("serverless-http");
 const express = require("express");
+const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
-const qrCode = require("qrcode");
 const swaggerSpecs = require("./swagger");
 
 const batchRouter = require("./routes/batches");
@@ -10,6 +10,7 @@ const stampRouter = require("./routes/notifications")
 const aiRouter = require("./routes/ai")
 
 const app = express();
+app.use(cors())
 app.use(express.json())
 
 app.get("/", (req, res, next) => {

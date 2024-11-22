@@ -14,7 +14,7 @@ const createItems = async (batchId, numItems) => {
                 let batchItem = {
                     batchId,
                     itemNumber: i + 1,
-                    status: 'DRAFT'
+                    status: 'MANUFACTURED'
                 };
 
                 const stamp = await stampData(batchItem, COLLECTION, 'CREATE');

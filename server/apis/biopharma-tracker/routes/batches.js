@@ -18,8 +18,8 @@ router.post("/", async (req, res, next) => {
 
     const payload = req.body;
 
-    const stamp = await stampData(payload, COLLECTION, 'CREATE');
-    let batch = { ...payload, status: 'CREATED' };
+    const stamp = await stampData(payload, COLLECTION, 'MANUFACTURED');
+    let batch = { ...payload, status: 'MANUFACTURED' };
     batch._id = stamp._id;
     batch.stamp = stamp;
 

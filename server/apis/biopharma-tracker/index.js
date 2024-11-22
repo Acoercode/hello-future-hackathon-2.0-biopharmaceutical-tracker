@@ -10,7 +10,7 @@ const stampRouter = require("./routes/notifications")
 const aiRouter = require("./routes/ai")
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json())
 
 app.get("/", (req, res, next) => {

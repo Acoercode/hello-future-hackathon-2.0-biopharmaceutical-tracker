@@ -74,8 +74,6 @@ const addActivity = async (batch, activity) => {
 const getBatch = async (batchId) => {
 
     try {
-
-        console.log('Looking batch up');
         await mongodb.connect();
 
         console.log('Connected to DB');
@@ -84,8 +82,6 @@ const getBatch = async (batchId) => {
             .db("biopharma-tracker")
             .collection(COLLECTION)
             .findOne({ _id: batchId });
-
-        console.log('Batch', batch);
 
         return batch;
 
@@ -100,9 +96,59 @@ const getBatch = async (batchId) => {
     return null;
 };
 
+const list = async (limit = 10, skip = 0, sort = "expirationDate", direction = "ASC", filters) => {
+
+    try {
+        await mongodb.connect();
+
+        const sortOp = {
+            [sort]: direction === "ASC" ? 1 : -1
+        }
+
+        const [{ total: [total = 0], edges }] = await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .aggregate([
+                {
+                    $facet: {
+                      total: [
+                        { $group: { _id: null, count: { $sum: 1 } } },
+                      ],
+                      edges: [
+                        { $sort: sortOp },
+                        { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
+                        { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
+                      ],
+                    },
+                  },
+                  {
+                    $project: {
+                      total: '$total.count',
+                      edges: '$edges',
+                    },
+                }
+            ]).toArray();
+
+            return res.status(200).json({
+                total,
+                pageSize: edges.length,
+                items: edges
+            });
+
+        // Create QR Code
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+
+}
+
 module.exports = {
     addBatch,
     updateBatch,
     addActivity,
-    getBatch
+    getBatch,
+    list
 }

@@ -1,5 +1,5 @@
 const getDb = require("../db");
-const stampData = require("./stamp");
+const { stampData } = require("./stamp");
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const mongodb = getDb();
@@ -17,7 +17,7 @@ const createItems = async (batchId, numItems) => {
                     status: 'MANUFACTURED'
                 };
 
-                const stamp = await stampData(batchItem, COLLECTION, 'CREATE');
+                const stamp = await stampData(batchItem, COLLECTION, 'MANUFACTURED');
 
                 batchItem._id = stamp._id;
                 batchItem.stamp = stamp;

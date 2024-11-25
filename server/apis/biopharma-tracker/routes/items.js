@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const generate = require("../qrCode");
 const { getBatchItem, list } = require("../services/items");
+const { validate } = require("../services/stamp");
 
 router.get("/list", async (req, res, next) => {
     const { batchId } = req.params;
@@ -58,6 +59,21 @@ router.get("/:itemId/qr-code", async (req, res, next) => {
     };
     const qrImage = await generate(qrData)
     res.send(qrImage);
+});
+
+router.get("/:itemId/trust", async (req, res, next) => {
+
+    const { batchId, itemId } = req.params;
+    const item = await getBatchItem(batchId, itemId);
+
+    if (!item) {
+        return res.status(404).json({
+            error: 'Item not found'
+        });
+    }
+
+    const validation = await validate(item);
+    return res.status(200).json(validation);
 });
 
 

@@ -5,13 +5,8 @@ const API_KEY = process.env.HASHLOG_API_KEY || "hbar_mk_vTnMts1ghaU96sULBWtg4y10
 
 const stampData = async (payload, type, action) => {
 
-    let toStamp = {
-        ...payload
-    };
-    delete toStamp['stamp'];
+    const hash = await getHash(payload);
 
-    const md5sum = crypto.createHash('md5');
-    const hash = md5sum.update(JSON.stringify(toStamp)).digest('hex')
     // Call the stamping API
     let stamp = await superagent
         .post("https://external.hashlog.io/event")
@@ -24,4 +19,44 @@ const stampData = async (payload, type, action) => {
     return stamp.body;
 }
 
-module.exports = stampData;
+const getHash = async (payload) => {
+
+    let toStamp = {
+        ...payload
+    };
+
+    // Remove fields that might change
+    delete toStamp['_id'];
+    delete toStamp['stamp'];
+
+    const md5sum = crypto.createHash('md5');
+    const hash = md5sum.update(JSON.stringify(toStamp)).digest('hex')
+
+    return hash;
+};
+
+const validate = async (payload) => {
+
+    if(!!payload.stamp && !!payload.stamp.data) {
+
+        const expected = JSON.parse(payload.stamp.data).hash;
+
+        console.log('Expected', expected);
+        const hash = await getHash(payload);
+        console.log('Hash', hash);
+
+
+
+        return ({
+            verified: expected === hash
+        });
+    }
+    return ({
+        verified: false
+    });
+}
+
+module.exports = {
+    stampData,
+    validate
+};

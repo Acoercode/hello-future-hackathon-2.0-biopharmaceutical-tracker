@@ -8,13 +8,15 @@ const COLLECTION = "batches";
 const updateBatch = async (batchId, payload) => {
     try {
         await mongodb.connect();
-    
+
         await mongodb
-                .db("biopharma-tracker")
-                .collection(COLLECTION)
-                .updateOne({ _id: batchId}, { "$set": {
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .updateOne({ _id: batchId }, {
+                "$set": {
                     ...payload
-                }});
+                }
+            });
 
         return await getBatch(batchId);
     } catch (e) {
@@ -22,7 +24,7 @@ const updateBatch = async (batchId, payload) => {
     } finally {
         // Ensures that the client will close when you finish/error
         if (mongodb) await mongodb.close();
-    } 
+    }
 };
 
 const addBatch = async (batch) => {
@@ -50,15 +52,17 @@ const addActivity = async (batch, activity) => {
             ...activity,
             date: (new Date()).toISOString()
         });
-    
-    
+
+
         await mongodb
-                .db("biopharma-tracker")
-                .collection(COLLECTION)
-                .updateOne({ _id: batch._id}, { "$set": {
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .updateOne({ _id: batch._id }, {
+                "$set": {
                     activities: activities,
                     status: activity.status
-                }});
+                }
+            });
 
         return await getBatch(batch._id);
     } catch (e) {
@@ -66,9 +70,9 @@ const addActivity = async (batch, activity) => {
     } finally {
         // Ensures that the client will close when you finish/error
         if (mongodb) await mongodb.close();
-    } 
-    
-    
+    }
+
+
 }
 
 const getBatch = async (batchId) => {
@@ -105,35 +109,49 @@ const list = async (limit = 10, skip = 0, sort = "expirationDate", direction = "
             [sort]: direction === "ASC" ? 1 : -1
         }
 
+        const aggregations = !!filters && Object.keys(filters).length > 0 ? [{
+            $match: Object.keys(filters).reduce((acc, key) => {
+                acc[key] = {
+                    "$in": filters[key].split(",").map(v => v.trim())
+                }
+                return acc;
+            }, {})
+        }] : [];
+
+        // Facet op
+        aggregations.push({
+            $facet: {
+                total: [
+                    { $group: { _id: null, count: { $sum: 1 } } },
+                ],
+                edges: [
+                    { $sort: sortOp },
+                    { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
+                    { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
+                ],
+            },
+        });
+
+        // Project op
+        aggregations.push({
+            $project: {
+                total: '$total.count',
+                edges: '$edges',
+            },
+        });
+
+        console.log('Aggregations', aggregations);
+
         const [{ total: [total = 0], edges }] = await mongodb
             .db("biopharma-tracker")
             .collection(COLLECTION)
-            .aggregate([
-                {
-                    $facet: {
-                      total: [
-                        { $group: { _id: null, count: { $sum: 1 } } },
-                      ],
-                      edges: [
-                        { $sort: sortOp },
-                        { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
-                        { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
-                      ],
-                    },
-                  },
-                  {
-                    $project: {
-                      total: '$total.count',
-                      edges: '$edges',
-                    },
-                }
-            ]).toArray();
+            .aggregate(aggregations).toArray();
 
-            return res.status(200).json({
-                total,
-                pageSize: edges.length,
-                items: edges
-            });
+        return {
+            total,
+            pageSize: edges.length,
+            items: edges
+        };
 
         // Create QR Code
     } catch (e) {

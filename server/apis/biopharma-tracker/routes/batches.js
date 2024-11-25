@@ -52,17 +52,9 @@ router.post("/:batchId/activity", async (req, res, next) => {
 router.get("/list", async (req, res, next) => {
     const { limit = 10, skip = 0, sort = "expirationDate", direction = "ASC", ...filters } = req.query;
 
-    console.log('Filters', filters)
-
-
-
     const response = await list(limit, skip, sort, direction, filters);
 
-    return res.status(200).json({
-        total,
-        pageSize: edges.length,
-        items: edges
-    });
+    return res.status(200).json(response);
 
 });
 

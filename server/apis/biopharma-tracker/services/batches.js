@@ -100,6 +100,55 @@ const getBatch = async (batchId) => {
     return null;
 };
 
+const facets = async (filters) => {
+    try {
+        await mongodb.connect();
+
+        const aggregations = !!filters && Object.keys(filters).length > 0 ? [{
+            $match: Object.keys(filters).reduce((acc, key) => {
+                acc[key] = {
+                    "$in": filters[key].split(",").map(v => v.trim())
+                }
+                return acc;
+            }, {})
+        }] : [];
+
+        // Facet op
+        aggregations.push({
+            $facet: {
+                brands: [
+                    { $unwind: "$brand" },
+                    { $sortByCount: "$brand" }
+                  ],
+                statuses: [
+                    { $unwind: "$status" },
+                    { $sortByCount: "$status" }
+                  ],
+                productTypes: [
+                    { $unwind: "$productType" },
+                    { $sortByCount: "$productType" }
+                  ],
+            },
+        });
+
+        console.log('Aggregations', aggregations);
+
+        const facets = await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .aggregate(aggregations).toArray();
+
+        return facets;
+
+        // Create QR Code
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+}
+
 const list = async (limit = 10, skip = 0, sort = "expirationDate", direction = "ASC", filters) => {
 
     try {
@@ -168,5 +217,6 @@ module.exports = {
     updateBatch,
     addActivity,
     getBatch,
-    list
+    list,
+    facets
 }

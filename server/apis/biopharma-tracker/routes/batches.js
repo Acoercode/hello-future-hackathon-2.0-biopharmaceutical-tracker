@@ -4,7 +4,7 @@ const express = require('express');
 const { stampData, validate } = require("../services/stamp");
 const getDb = require("../db");
 const generate = require("../qrCode");
-const { getBatch, addActivity, updateBatch, addBatch, list } = require("../services/batches");
+const { getBatch, addActivity, updateBatch, addBatch, list, facets } = require("../services/batches");
 
 const router = express.Router();
 
@@ -53,6 +53,15 @@ router.get("/list", async (req, res, next) => {
     const { limit = 10, skip = 0, sort = "expirationDate", direction = "ASC", ...filters } = req.query;
 
     const response = await list(limit, skip, sort, direction, filters);
+
+    return res.status(200).json(response);
+
+});
+
+router.get("/facets", async (req, res, next) => {
+    const { ...filters } = req.query;
+
+    const response = await facets(filters);
 
     return res.status(200).json(response);
 

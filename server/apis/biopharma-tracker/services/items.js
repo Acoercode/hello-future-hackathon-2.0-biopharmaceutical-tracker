@@ -7,10 +7,10 @@ const mongodb = getDb();
 const COLLECTION = "batch-items";
 
 const createItems = async (batchId, numItems) => {
-    if(numItems) {
+    if (numItems) {
         try {
             await mongodb.connect();
-            for(let i=0; i<numItems; i++) {
+            for (let i = 0; i < numItems; i++) {
                 let batchItem = {
                     batchId,
                     itemNumber: i + 1,
@@ -26,8 +26,8 @@ const createItems = async (batchId, numItems) => {
                     .collection(COLLECTION)
                     .insertOne(batchItem);
             }
-            
-            
+
+
             console.log('Batch items created!')
         } catch (e) {
             console.log(e);
@@ -45,7 +45,7 @@ const getBatchItem = async (batchId, itemId) => {
         const item = await mongodb
             .db("biopharma-tracker")
             .collection(COLLECTION)
-            .findOne({ 
+            .findOne({
                 _id: itemId,
                 batchId
             });
@@ -53,7 +53,7 @@ const getBatchItem = async (batchId, itemId) => {
         const batch = await mongodb
             .db("biopharma-tracker")
             .collection("batches")
-            .findOne({ 
+            .findOne({
                 _id: batchId
             });
 
@@ -77,7 +77,7 @@ const getBatchItem = async (batchId, itemId) => {
     }
 }
 
-const list = async (batchId, limit = 10, skip = 0, sort = "itemNumber", direction = "ASC" ) => {
+const list = async (batchId, limit = 10, skip = 0, sort = "itemNumber", direction = "ASC", filters) => {
 
     const sortOp = {
         [sort]: direction === "ASC" ? 1 : -1
@@ -86,40 +86,53 @@ const list = async (batchId, limit = 10, skip = 0, sort = "itemNumber", directio
     try {
         await mongodb.connect();
 
+        const aggregations = !!filters && Object.keys(filters).length > 0 ? [{
+            $match: Object.keys(filters).reduce((acc, key) => {
+                acc[key] = {
+                    "$in": filters[key].split(",").map(v => v.trim())
+                }
+                return acc;
+            }, {
+                batchId: batchId
+            })
+        }] : [{
+            $match: {
+                batchId: batchId
+            }
+        }];
+
+        // Facet op
+        aggregations.push({
+            $facet: {
+                total: [
+                    { $group: { _id: null, count: { $sum: 1 } } },
+                ],
+                edges: [
+                    { $sort: sortOp },
+                    { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
+                    { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
+                ],
+            },
+        });
+
+        // Project op
+        aggregations.push({
+            $project: {
+                total: '$total.count',
+                edges: '$edges',
+            },
+        });
+
         const [{ total: [total = 0], edges }] = await mongodb
             .db("biopharma-tracker")
             .collection(COLLECTION)
-            .aggregate([
-                { 
-                    $match: {
-                        batchId: batchId
-                    }
-                },
-                {
-                    $facet: {
-                      total: [
-                        { $group: { _id: null, count: { $sum: 1 } } },
-                      ],
-                      edges: [
-                        { $sort: sortOp },
-                        { $skip: typeof skip === 'string' ? Number.parseInt(skip) : skip },
-                        { $limit: typeof limit === 'string' ? Number.parseInt(limit) : limit },
-                      ],
-                    },
-                  },
-                  {
-                    $project: {
-                      total: '$total.count',
-                      edges: '$edges',
-                    },
-                }
-            ]).toArray();
+            .aggregate(aggregations).toArray();
 
-            return {
-                total,
-                pageSize: edges.length,
-                items: edges
-            };
+        return {
+            total,
+            pageSize: edges.length,
+            items: edges
+        };
     } catch (e) {
         console.log(e);
     } finally {

@@ -7,9 +7,9 @@ const { validate } = require("../services/stamp");
 router.get("/list", async (req, res, next) => {
     const { batchId } = req.params;
 
-    const { limit = 10, skip = 0, sort = "itemNumber", direction = "ASC" } = req.query;
+    const { limit = 10, skip = 0, sort = "itemNumber", direction = "ASC", ...filters } = req.query;
 
-    const response = await list(batchId, limit, skip, sort, direction);
+    const response = await list(batchId, limit, skip, sort, direction, filters);
 
     return res.status(200).json(response);
 

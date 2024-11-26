@@ -7,10 +7,10 @@ import { adminActions } from "./AdminActions";
 import TrackingPanel from "./TrackingPanel";
 import DetailsPanel from "./DetailsPanel";
 import DetailsMapPanel from "./DetailsMapPanel";
+import Trustness from "../Actions/Trustness";
 
 // mui
 import Grid from "@mui/material/Grid2";
-import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import { DialogContentText, Divider, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -19,7 +19,6 @@ import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
-import Trustness from "../Actions/Trustness";
 
 interface ItemDetailsDialogProps {
   open: boolean;

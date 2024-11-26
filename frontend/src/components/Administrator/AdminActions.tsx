@@ -24,6 +24,10 @@ export const types = {
   GET_ITEMS_DETAIL_REQUEST: "GET_ITEMS_DETAIL_REQUEST",
   GET_ITEMS_DETAIL_SUCCESS: "GET_ITEMS_DETAIL_SUCCESS",
   GET_ITEMS_DETAIL_FAILURE: "GET_ITEMS_DETAIL_FAILURE",
+  GET_TRUST_REQUEST: "GET_TRUST_REQUEST",
+  GET_TRUST_SUCCESS_ITEMS: "GET_TRUST_SUCCESS_ITEMS",
+  GET_TRUST_SUCCESS_BATCH: "GET_TRUST_SUCCESS_BATCH",
+  GET_TRUST_FAILURE: "GET_TRUST_FAILURE",
 };
 
 // @ts-ignore
@@ -271,6 +275,66 @@ export const getItemDetails: ActionCreator<
   };
 
 // @ts-ignore
+export const checkTrustness: ActionCreator<
+  // @ts-ignore
+  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
+> =
+  (id: string, itemId: string) =>
+  async (
+    dispatch: (arg0: {
+      type: string;
+      payload?: { id: string; data?: any; error?: undefined };
+      error?: string;
+    }) => void,
+  ) => {
+    dispatch({
+      type: types.GET_TRUST_REQUEST,
+      payload: {
+        id: itemId ? itemId : id,
+      },
+    });
+
+    let url = `${API_ROOT}/batches/${id}/trust`;
+    if (itemId) {
+      url = `${API_ROOT}/batches/${id}/items/${itemId}/trust`;
+    }
+
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+      });
+
+      if (itemId) {
+        dispatch({
+          type: types.GET_TRUST_SUCCESS_ITEMS,
+          payload: {
+            id,
+            data: response.data,
+            error: undefined,
+          },
+        });
+        return;
+      } else {
+        dispatch({
+          type: types.GET_TRUST_SUCCESS_BATCH,
+          payload: {
+            id,
+            data: response.data,
+            error: undefined,
+          },
+        });
+      }
+    } catch (error) {
+      console.log("Get Trust Error", error);
+      dispatch({
+        type: types.GET_TRUST_FAILURE,
+        error: "There was an issue fetching trust. Please try again later.",
+      });
+    }
+  };
+
+// @ts-ignore
 export const adminActions: ActionCreatorsMapObject<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
@@ -281,4 +345,5 @@ export const adminActions: ActionCreatorsMapObject<
   getBatchItems,
   getBatchActivity,
   getItemDetails,
+  checkTrustness,
 };

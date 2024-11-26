@@ -6,6 +6,7 @@ export interface IAdminAction {
 }
 
 export interface IAdminState {
+  itemsTrustList?: any;
   loading?: boolean;
   error?: string;
 }

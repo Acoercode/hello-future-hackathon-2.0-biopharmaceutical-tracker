@@ -136,6 +136,26 @@ export const adminReducer: Reducer<IWorkspaceState, IWorkspaceAction> = (
         itemDetailsError: action.error,
       };
     }
+    case types.GET_BATCH_QR_REQUEST: {
+      return {
+        ...state,
+        batchQrLoading: true,
+      };
+    }
+    case types.GET_BATCH_QR_SUCCESS: {
+      return {
+        ...state,
+        batchQrLoading: false,
+        batchQrCode: action.payload?.data,
+      };
+    }
+    case types.GET_BATCH_QR_FAILURE: {
+      return {
+        ...state,
+        batchQrLoading: false,
+        batchQrError: action.error,
+      };
+    }
     default:
       return state;
   }

@@ -17,7 +17,6 @@ const OperatorBottomSheet: React.FC = () => {
 
   return (
     <>
-      {/* Opens to 400 since initial index is 1 */}
       <Sheet
         ref={ref}
         isOpen={isOpen}

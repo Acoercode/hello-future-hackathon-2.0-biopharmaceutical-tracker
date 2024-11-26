@@ -15,7 +15,7 @@ const AdminCreateBatchView: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/admin");
   };
 
   return (

@@ -28,6 +28,9 @@ export const types = {
   GET_TRUST_SUCCESS_ITEMS: "GET_TRUST_SUCCESS_ITEMS",
   GET_TRUST_SUCCESS_BATCH: "GET_TRUST_SUCCESS_BATCH",
   GET_TRUST_FAILURE: "GET_TRUST_FAILURE",
+  GET_BATCH_QR_REQUEST: "GET_BATCH_QR_REQUEST",
+  GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
+  GET_BATCH_QR_FAILURE: "GET_BATCH_QR_FAILURE",
 };
 
 // @ts-ignore
@@ -335,6 +338,46 @@ export const checkTrustness: ActionCreator<
   };
 
 // @ts-ignore
+export const getBatchQrCode: ActionCreator<
+  // @ts-ignore
+  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
+> =
+  (id: string, itemId: string) =>
+  async (
+    dispatch: (arg0: {
+      type: string;
+      payload?: { data: any; error: undefined };
+      error?: string;
+    }) => void,
+  ) => {
+    dispatch({
+      type: types.GET_BATCH_QR_REQUEST,
+    });
+
+    try {
+      const response = await axios({
+        method: "GET",
+        url: `${API_ROOT}/batches/${id}/qr-code`,
+      });
+
+      dispatch({
+        type: types.GET_BATCH_QR_SUCCESS,
+        payload: {
+          data: response.data,
+          error: undefined,
+        },
+      });
+    } catch (error) {
+      console.log("Get Item Detail Error", error);
+      dispatch({
+        type: types.GET_BATCH_QR_FAILURE,
+        error:
+          "There was an issue fetching item details. Please try again later.",
+      });
+    }
+  };
+
+// @ts-ignore
 export const adminActions: ActionCreatorsMapObject<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
@@ -346,4 +389,5 @@ export const adminActions: ActionCreatorsMapObject<
   getBatchActivity,
   getItemDetails,
   checkTrustness,
+  getBatchQrCode,
 };

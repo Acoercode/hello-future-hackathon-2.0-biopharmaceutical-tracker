@@ -175,9 +175,16 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
               <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
                 {title}
               </Typography>
-              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
-                # {details && details.productId}
-              </Typography>
+              {title.includes("Batch") ? (
+                <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                  # {details && details.productId}
+                </Typography>
+              ) : (
+                <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                  # {details && details.batch.productId} -{" "}
+                  {details && details.itemNumber}
+                </Typography>
+              )}
             </Grid>
             <Grid size={"auto"}>
               <Chip

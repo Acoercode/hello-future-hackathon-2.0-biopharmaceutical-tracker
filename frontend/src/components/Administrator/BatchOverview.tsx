@@ -12,6 +12,7 @@ import utils from "../../utils/utils";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import Trustness from "../Actions/Trustness";
 
 const BatchOverview: React.FC = () => {
   const navigate = useNavigate();
@@ -128,8 +129,43 @@ const BatchOverview: React.FC = () => {
       name: "trust",
       label: "Trust",
       options: {
-        filter: true,
+        filter: false,
         sort: false,
+        customBodyRender: () => {
+          return (
+            <Trustness
+              type="file"
+              score={
+                100
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].trust &&
+                // trustData.files[f.id].trust.score
+              }
+              verified={
+                true
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].trust &&
+                // trustData.files[f.id].trust.verified
+              }
+              checking={
+                false
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].checkingTrust
+              }
+              onExpertVerification={
+                () => console.log("validate")
+                // window.open(
+                //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
+                //     '_blank'
+                // )
+              }
+              disabled={false}
+            />
+          );
+        },
       },
     },
   ];

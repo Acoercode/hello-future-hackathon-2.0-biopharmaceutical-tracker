@@ -89,6 +89,53 @@ export const adminReducer: Reducer<IWorkspaceState, IWorkspaceAction> = (
         batchActivityError: action.error,
       };
     }
+    case types.GET_ITEMS_DETAIL_REQUEST: {
+      return {
+        ...state,
+        itemDetailsLoading: true,
+      };
+    }
+    case types.GET_ITEMS_DETAIL_SUCCESS: {
+      return {
+        ...state,
+        itemDetailsLoading: false,
+        itemDetails: action.payload?.data,
+      };
+    }
+    case types.GET_ITEMS_DETAIL_FAILURE: {
+      return {
+        ...state,
+        itemDetailsLoading: false,
+        itemDetailsError: action.error,
+      };
+    }
+    case types.GET_TRUST_REQUEST: {
+      return {
+        ...state,
+        [`trustLoading_${action.payload?.id}`]: true,
+      };
+    }
+    case types.GET_TRUST_SUCCESS_ITEMS: {
+      return {
+        ...state,
+        [`trustLoading_${action.payload?.id}`]: false,
+        itemsTrustList: [...state.itemsTrustList, action.payload?.data],
+      };
+    }
+    case types.GET_TRUST_SUCCESS_BATCH: {
+      return {
+        ...state,
+        [`trustLoading_${action.payload?.id}`]: false,
+        batchTrust: action.payload?.data,
+      };
+    }
+    case types.GET_TRUST_FAILURE: {
+      return {
+        ...state,
+        [`trustLoading_${action.payload?.id}`]: false,
+        itemDetailsError: action.error,
+      };
+    }
     default:
       return state;
   }

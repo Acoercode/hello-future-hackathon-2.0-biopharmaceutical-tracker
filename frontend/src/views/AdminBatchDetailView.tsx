@@ -9,7 +9,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import controlIcon from "../assets/images/Control.svg";
 import { useNavigate } from "react-router-dom";
-import BatchDetails from "../components/administrator/BatchDetails";
+import BatchDetails from "../components/Administrator/BatchDetails";
 
 const AdminBatchDetailView: React.FC = () => {
   const navigate = useNavigate();

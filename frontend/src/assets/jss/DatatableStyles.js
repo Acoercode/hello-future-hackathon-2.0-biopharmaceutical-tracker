@@ -84,7 +84,7 @@ const datatableTheme = (mode) =>
           paddingRight: "0px !important",
           paddingLeft: "0px !important",
           "& .MuiSvgIcon-root": {
-            color: "#FFDB58",
+            color: "#fff",
           },
         },
       },

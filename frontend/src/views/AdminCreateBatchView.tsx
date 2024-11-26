@@ -2,7 +2,7 @@ import React from "react";
 
 // components and helpers
 import ComponentWrapper from "../containers/ComponentWrapper";
-import CreateBatch from "../components/administrator/CreateBatch";
+import CreateBatch from "../components/Administrator/CreateBatch";
 import controlIcon from "../assets/images/Control.svg";
 
 // mui

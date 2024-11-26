@@ -28,6 +28,28 @@
   color: #61dafb;
 }
 
+.react-modal-sheet-backdrop {
+  /* custom styles */
+}
+.react-modal-sheet-container {
+  background-color: #0b0b0b !important;
+  border-top-left-radius: 30px !important;
+  border-top-right-radius: 30px !important;
+  /* custom styles */
+}
+.react-modal-sheet-header {
+  /* custom styles */
+}
+.react-modal-sheet-drag-indicator {
+  /* custom styles */
+}
+.react-modal-sheet-content {
+  background-color: #0b0b0b;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  /* custom styles */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

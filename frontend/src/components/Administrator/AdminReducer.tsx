@@ -89,6 +89,26 @@ export const adminReducer: Reducer<IWorkspaceState, IWorkspaceAction> = (
         batchActivityError: action.error,
       };
     }
+    case types.GET_ITEMS_DETAIL_REQUEST: {
+      return {
+        ...state,
+        itemDetailsLoading: true,
+      };
+    }
+    case types.GET_ITEMS_DETAIL_SUCCESS: {
+      return {
+        ...state,
+        itemDetailsLoading: false,
+        itemDetails: action.payload?.data,
+      };
+    }
+    case types.GET_ITEMS_DETAIL_FAILURE: {
+      return {
+        ...state,
+        itemDetailsLoading: false,
+        itemDetailsError: action.error,
+      };
+    }
     default:
       return state;
   }

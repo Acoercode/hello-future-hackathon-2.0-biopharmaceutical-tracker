@@ -11,12 +11,17 @@ import Grid from "@mui/material/Grid2";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import QrCodeIcon from "@mui/icons-material/QrCode";
+import Trustness from "../Actions/Trustness";
 
 interface BatchItemsListProps {
   items: any;
+  setSelectedItemId: (id: string) => void;
 }
 
-const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
+const BatchItemsList: React.FC<BatchItemsListProps> = ({
+  items,
+  setSelectedItemId,
+}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -63,6 +68,41 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
       options: {
         filter: false,
         sort: false,
+        customBodyRender: () => {
+          return (
+            <Trustness
+              type="file"
+              score={
+                100
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].trust &&
+                // trustData.files[f.id].trust.score
+              }
+              verified={
+                true
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].trust &&
+                // trustData.files[f.id].trust.verified
+              }
+              checking={
+                false
+                // trustData.files &&
+                // trustData.files[f.id] &&
+                // trustData.files[f.id].checkingTrust
+              }
+              onExpertVerification={
+                () => console.log("validate")
+                // window.open(
+                //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
+                //     '_blank'
+                // )
+              }
+              disabled={false}
+            />
+          );
+        },
       },
     },
     {
@@ -85,8 +125,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
       rowData: string[],
       rowMeta: { dataIndex: number; rowIndex: number },
     ) => {
-      console.log("ROW CLICK");
-      // navigate(`/admin/batch/${rowData[0]}`);
+      setSelectedItemId(rowData[0]);
     },
     rowsPerPage: 5,
     rowsPerPageOptions: [5],
@@ -95,7 +134,11 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({ items }) => {
     customToolbar: () => {
       return (
         <React.Fragment>
-          <Button startIcon={<QrCodeIcon />} variant={"outlined"}>
+          <Button
+            startIcon={<QrCodeIcon />}
+            variant={"outlined"}
+            color={"inherit"}
+          >
             Item QR Codes
           </Button>
         </React.Fragment>

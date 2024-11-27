@@ -14,7 +14,11 @@ const createItems = async (batchId, numItems) => {
                 let batchItem = {
                     batchId,
                     itemNumber: i + 1,
-                    status: 'MANUFACTURED'
+                    status: 'MANUFACTURED',
+                    activities: [{
+                        status: 'MANUFACTURED',
+                        date: (new Date()).toISOString()
+                    }]
                 };
 
                 const stamp = await stampData(batchItem, COLLECTION, 'MANUFACTURED');
@@ -27,7 +31,6 @@ const createItems = async (batchId, numItems) => {
                     .insertOne(batchItem);
             }
 
-
             console.log('Batch items created!')
         } catch (e) {
             console.log(e);
@@ -35,6 +38,28 @@ const createItems = async (batchId, numItems) => {
             // Ensures that the client will close when you finish/error
             if (mongodb) await mongodb.close();
         }
+    }
+};
+
+const updateBatchItem = async (batchId, batchItemId, payload) => {
+    try {
+        await mongodb.connect();
+
+        await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .updateOne({ _id: batchItemId, batchId }, {
+                "$set": {
+                    ...payload
+                }
+            });
+
+        return await getBatchItem(batchId, batchItemId);
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
     }
 };
 
@@ -142,8 +167,72 @@ const list = async (batchId, limit = 10, skip = 0, sort = "itemNumber", directio
 
 }
 
+const count = async (batchId, filters) => {
+    try {
+        await mongodb.connect();
+
+        const match = !!filters && Object.keys(filters).length > 0 ? Object.keys(filters).reduce((acc, key) => {
+            acc[key] = {
+                "$in": filters[key].split(",").map(v => v.trim())
+            }
+            return acc;
+        }, {
+            batchId: batchId
+        }) : {
+            batchId: batchId
+        };
+
+        const countTotal = await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .countDocuments(match);
+
+        return countTotal;
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+
+}
+
+const addItemActivity = async (batchItem, activity) => {
+    try {
+        await mongodb.connect();
+        const activities = batchItem.activities || [];
+        activities.push({
+            ...activity,
+            date: (new Date()).toISOString()
+        });
+
+
+        await mongodb
+            .db("biopharma-tracker")
+            .collection(COLLECTION)
+            .updateOne({ _id: batchItem._id }, {
+                "$set": {
+                    activities: activities,
+                    status: activity.status
+                }
+            });
+
+        return await getBatchItem(batchItem.batchId, batchItem._id);
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+
+
+}
+
 module.exports = {
     createItems,
     getBatchItem,
-    list
+    list,
+    addItemActivity,
+    updateBatchItem,
+    count
 };

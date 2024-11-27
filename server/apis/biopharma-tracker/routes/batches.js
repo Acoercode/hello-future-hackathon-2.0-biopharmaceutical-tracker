@@ -2,25 +2,25 @@ const express = require('express');
 
 
 const { stampData, validate } = require("../services/stamp");
-const getDb = require("../db");
 const generate = require("../qrCode");
-const { getBatch, addActivity, updateBatch, addBatch, list, facets } = require("../services/batches");
+const { getBatch, addBatchActivity, updateBatch, addBatch, list, facets } = require("../services/batches");
 
 const router = express.Router();
-
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const mongodb = getDb();
 
 const COLLECTION = "batches";
 
 router.post("/", async (req, res, next) => {
 
     const payload = req.body;
-    let batch = { ...payload, status: 'MANUFACTURED' };
+    let batch = {
+        ...payload, status: 'MANUFACTURED', activities: [{
+            status: 'MANUFACTURED',
+            date: (new Date()).toISOString()
+        }]
+    };
 
     const stamp = await stampData(batch, COLLECTION, 'MANUFACTURED');
-    
+
     batch._id = stamp._id;
     batch.stamp = stamp;
 
@@ -37,7 +37,7 @@ router.post("/:batchId/activity", async (req, res, next) => {
 
     if (batch) {
         const payload = req.body;
-        const updatedBatch = await addActivity(batch, payload);
+        const updatedBatch = await addBatchActivity(batch, payload);
         const stamp = await stampData(updatedBatch, COLLECTION, payload.status);
         const stamped = await updateBatch(batchId, { stamp });
         console.log('Stamped batch', stamped);
@@ -72,7 +72,7 @@ router.get("/:batchId", async (req, res, next) => {
     const { batchId } = req.params;
     const batch = await getBatch(batchId);
 
-    if(batch) {
+    if (batch) {
         return res.status(200).json(batch);
     }
 
@@ -115,7 +115,7 @@ router.get("/:batchId/trust", async (req, res, next) => {
     const { batchId } = req.params;
     const batch = await getBatch(batchId);
 
-    if(batch) {
+    if (batch) {
         const validation = await validate(batch);
         return res.status(200).json(validation);
     }

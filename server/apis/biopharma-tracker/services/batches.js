@@ -44,7 +44,7 @@ const addBatch = async (batch) => {
     }
 };
 
-const addActivity = async (batch, activity) => {
+const addBatchActivity = async (batch, activity) => {
     try {
         await mongodb.connect();
         const activities = batch.activities || [];
@@ -131,8 +131,6 @@ const facets = async (filters) => {
             },
         });
 
-        console.log('Aggregations', aggregations);
-
         const facets = await mongodb
             .db("biopharma-tracker")
             .collection(COLLECTION)
@@ -215,7 +213,7 @@ const list = async (limit = 10, skip = 0, sort = "expirationDate", direction = "
 module.exports = {
     addBatch,
     updateBatch,
-    addActivity,
+    addBatchActivity,
     getBatch,
     list,
     facets

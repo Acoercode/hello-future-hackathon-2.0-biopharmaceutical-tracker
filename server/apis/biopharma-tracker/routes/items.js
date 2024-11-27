@@ -1,8 +1,15 @@
 const express = require('express');
-const router = express.Router({ mergeParams: true });
+
 const generate = require("../qrCode");
-const { getBatchItem, list } = require("../services/items");
-const { validate } = require("../services/stamp");
+const { getBatchItem, list, addItemActivity, updateBatchItem, count } = require("../services/items");
+const { getBatch, addBatchActivity, updateBatch } = require("../services/batches");
+const { stampData, validate } = require("../services/stamp");
+
+
+const router = express.Router({ mergeParams: true });
+
+const COLLECTION = "batch-items";
+const BATCH_COLLECTION = "batches";
 
 router.get("/list", async (req, res, next) => {
     const { batchId } = req.params;
@@ -74,6 +81,57 @@ router.get("/:itemId/trust", async (req, res, next) => {
 
     const validation = await validate(item);
     return res.status(200).json(validation);
+});
+
+router.post("/:itemId/activity", async (req, res, next) => {
+    const { batchId, itemId } = req.params;
+    const batchItem = await getBatchItem(batchId, itemId);
+
+    if (batchItem) {
+        const payload = req.body;
+
+        // ONLY ALLOW MANUFACTURED
+        if (!!batchItem.status && batchItem.status !== 'ADMINISTERED' && !!payload.status && payload.status === 'ADMINISTERED') {
+            const updatedBatch = await addItemActivity(batchItem, payload);
+            const stamp = await stampData(updatedBatch, COLLECTION, payload.status);
+            let stamped = await updateBatchItem(batchId, itemId, { stamp });
+            console.log('Stamped batch item', stamped);
+
+            // Check batch
+            const administeredCount = await count(batchId, {status: 'ADMINISTERED'});
+            
+            if(administeredCount > 0) {
+                const batch = await getBatch(batchId);
+
+                if(!batch) {
+                    return res.status(404).json({
+                        error: 'Parent batch not found.'
+                    });
+                }
+
+                if(batch.numberOfItems == administeredCount) {
+                    // Update batch
+                    const payload = { status: 'ADMINISTERED' };
+                    const updatedBatch = await addBatchActivity(batch, payload);
+                    const batchStamp = await stampData(updatedBatch, BATCH_COLLECTION, payload.status);
+                    await updateBatch(batchId, { stamp: batchStamp });
+                    stamped = await getBatchItem(batchId, itemId);
+                    console.log('Stamped batch');
+                }
+            }
+
+            return res.status(200).json(stamped);
+        }
+
+        return res.status(403).json({
+            error: 'Status update not allowed'
+        });
+
+    } else {
+        return res.status(404).json({
+            error: 'Batch item not found'
+        });
+    }
 });
 
 

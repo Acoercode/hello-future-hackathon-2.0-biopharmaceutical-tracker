@@ -2,6 +2,7 @@ build:
 	npm i --legacy-peer-deps
 	REACT_APP_API_ROOT=https://z2gxpnpu07.execute-api.us-east-1.amazonaws.com \
 	REACT_APP_APP_URL=https://hedera-biopharmaceutical-tracker.acoerlabs.com \
+	GENERATE_SOURCEMAP=false \
 	CI=false \
 	npm run build
 	aws s3 rm s3://hedera-biopharmaceutical-tracker.acoerlabs.com/ --recursive

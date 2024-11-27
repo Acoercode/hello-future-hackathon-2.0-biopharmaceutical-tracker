@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 // components and helpers
 import ComponentWrapper from "../containers/ComponentWrapper";
@@ -18,14 +18,14 @@ const OperatorOverviewView: React.FC = () => {
     setData("");
   };
 
-  const demoData = {
-    id: "fe07070e-4abb-4402-9971-e7192a63b084",
-    brand: "LA ROCHE",
-    productId: "VC-024",
-    productType: "VACCINE",
-    expirationDate: "2025/08/06",
-    numberOfItems: 10,
-  };
+  // const demoData = {
+  //   id: "fe07070e-4abb-4402-9971-e7192a63b084",
+  //   brand: "LA ROCHE",
+  //   productId: "VC-024",
+  //   productType: "VACCINE",
+  //   expirationDate: "2025/08/06",
+  //   numberOfItems: 10,
+  // };
   return (
     <Grid container justifyContent={"center"} spacing={4}>
       {!data ? (

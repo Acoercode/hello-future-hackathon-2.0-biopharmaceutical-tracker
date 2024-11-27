@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Sheet, SheetRef } from "react-modal-sheet";
 
 // components and helpers
@@ -6,7 +6,6 @@ import scanImage from "../../assets/images/scan_qr.svg";
 // mui
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { JSX } from "react/jsx-runtime";
 import Grid from "@mui/material/Grid2";
 import Chip from "@mui/material/Chip";
 import { Divider, TextField } from "@mui/material";
@@ -32,7 +31,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({ data }) => {
     }
   }, [data]);
 
-  console.log("DATA", data);
+  // console.log("DATA", data);
   const renderHeader = (
     <Grid
       container

@@ -1,5 +1,6 @@
 const getDb = require("../db");
 const { stampData } = require("./stamp");
+const { daysBetween } = require("../utils");
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const mongodb = getDb();
@@ -224,7 +225,369 @@ const addItemActivity = async (batchItem, activity) => {
         // Ensures that the client will close when you finish/error
         if (mongodb) await mongodb.close();
     }
+}
 
+const getStockLevelAt = async (date, productId) => {
+    try {
+        await mongodb.connect();
+
+        const aggregation = [
+            {
+                $match:
+                /**
+                 * query: The query in MQL.
+                 */
+                {
+                    productId: productId
+                }
+            },
+            {
+                $lookup:
+                /**
+                 * from: The target collection.
+                 * localField: The local join field.
+                 * foreignField: The target join field.
+                 * as: The name for the results.
+                 * pipeline: Optional pipeline to run on the foreign collection.
+                 * let: Optional variables to use in the pipeline field stages.
+                 */
+                {
+                    from: "batch-items",
+                    localField: "_id",
+                    foreignField: "batchId",
+                    as: "items"
+                }
+            },
+            {
+                $unwind:
+                /**
+                 * path: Path to the array field.
+                 * includeArrayIndex: Optional name for index.
+                 * preserveNullAndEmptyArrays: Optional
+                 *   toggle to unwind null and empty values.
+                 */
+                {
+                    path: "$items",
+                    preserveNullAndEmptyArrays: false
+                }
+            },
+            {
+                $addFields:
+                /**
+                 * newField: The new field name.
+                 * expression: The new field expression.
+                 */
+                {
+                    itemId: "$items._id",
+                    activities: "$items.activities"
+                }
+            },
+            {
+                $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                    batchId: 1,
+                    itemId: 1,
+                    activities: 1
+                }
+            },
+            {
+                $unwind:
+                /**
+                 * path: Path to the array field.
+                 * includeArrayIndex: Optional name for index.
+                 * preserveNullAndEmptyArrays: Optional
+                 *   toggle to unwind null and empty values.
+                 */
+                {
+                    path: "$activities",
+                    preserveNullAndEmptyArrays: false
+                }
+            },
+            {
+                $addFields:
+                /**
+                 * newField: The new field name.
+                 * expression: The new field expression.
+                 */
+                {
+                    status: "$activities.status",
+                    date: "$activities.date"
+                }
+            },
+            {
+                $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                    itemId: 1,
+                    status: 1,
+                    date: {
+                        $dateFromString: {
+                            dateString: "$date"
+                        }
+                    }
+                }
+            },
+            {
+                $match:
+                /**
+                 * query: The query in MQL.
+                 */
+                {
+                    date: {
+                        $lt: date
+                    }
+                }
+            },
+            {
+                $group:
+                /**
+                 * _id: The id of the group.
+                 * fieldN: The first field name.
+                 */
+                {
+                    _id: "status",
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }
+        ];
+
+        const result = await mongodb
+            .db("biopharma-tracker")
+            .collection('batches')
+            .aggregate(aggregation).toArray();
+
+        const total = result && result.length > 0 && result.reduce((accum, r) => {
+            if (r._id === 'ADMINISTERED')
+                return accum - r.count;
+            if (r._id === 'MANUFACTURED')
+                return accum + r.count
+        }, 0) || 0;
+
+        return total;
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
+}
+
+const getStockLevel = async (since, productId) => {
+    const initialLevel = await getStockLevelAt(since, productId);
+
+    try {
+        await mongodb.connect();
+
+        const aggregation = [
+            {
+                $match:
+                /**
+                 * query: The query in MQL.
+                 */
+                {
+                    productId: productId
+                }
+            },
+            {
+                $lookup:
+                /**
+                 * from: The target collection.
+                 * localField: The local join field.
+                 * foreignField: The target join field.
+                 * as: The name for the results.
+                 * pipeline: Optional pipeline to run on the foreign collection.
+                 * let: Optional variables to use in the pipeline field stages.
+                 */
+                {
+                    from: "batch-items",
+                    localField: "_id",
+                    foreignField: "batchId",
+                    as: "items"
+                }
+            },
+            {
+                $unwind:
+                /**
+                 * path: Path to the array field.
+                 * includeArrayIndex: Optional name for index.
+                 * preserveNullAndEmptyArrays: Optional
+                 *   toggle to unwind null and empty values.
+                 */
+                {
+                    path: "$items",
+                    preserveNullAndEmptyArrays: false
+                }
+            },
+            {
+                $addFields:
+                /**
+                 * newField: The new field name.
+                 * expression: The new field expression.
+                 */
+                {
+                    itemId: "$items._id",
+                    activities: "$items.activities"
+                }
+            },
+            {
+                $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                    batchId: 1,
+                    itemId: 1,
+                    activities: 1
+                }
+            },
+            {
+                $unwind:
+                /**
+                 * path: Path to the array field.
+                 * includeArrayIndex: Optional name for index.
+                 * preserveNullAndEmptyArrays: Optional
+                 *   toggle to unwind null and empty values.
+                 */
+                {
+                    path: "$activities",
+                    preserveNullAndEmptyArrays: false
+                }
+            },
+            {
+                $addFields:
+                /**
+                 * newField: The new field name.
+                 * expression: The new field expression.
+                 */
+                {
+                    status: "$activities.status",
+                    date: {
+                        $substr: ["$activities.date", 0, 10]
+                    }
+                }
+            },
+            {
+                $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                    itemId: 1,
+                    status: 1,
+                    date: 1,
+                    when: {
+                        $dateFromString: {
+                            dateString: "$date"
+                        }
+                    }
+                }
+            },
+            {
+                $match:
+                /**
+                 * query: The query in MQL.
+                 */
+                {
+                    when: {
+                        $gte: since
+                    }
+                }
+            },
+            {
+                $facet:
+                /**
+                 * outputFieldN: The first output field.
+                 * stageN: The first aggregation stage.
+                 */
+                {
+                    manufactured: [
+                        {
+                            $match: {
+                                status: "MANUFACTURED"
+                            }
+                        },
+                        {
+                            $unwind: "$date"
+                        },
+                        {
+                            $sortByCount: "$date"
+                        }
+                    ],
+                    administered: [
+                        {
+                            $match: {
+                                status: "ADMINISTERED"
+                            }
+                        },
+                        {
+                            $unwind: "$date"
+                        },
+                        {
+                            $sortByCount: "$date"
+                        }
+                    ]
+                }
+            }
+        ];
+
+        const [{ manufactured, administered }] = await mongodb
+            .db("biopharma-tracker")
+            .collection('batches')
+            .aggregate(aggregation).toArray()
+
+        const manufacturedByDate = manufactured.reduce((accum, v) => {
+            return {
+                ...accum,
+                [v._id]: v.count
+            };
+        }, {});
+
+        const administeredByDate = administered.reduce((accum, v) => {
+            return {
+                ...accum,
+                [v._id]: v.count
+            };
+        }, {});
+
+        const firstDate = new Date();
+        firstDate.setDate((new Date()).getDate() - 29);
+        const days = daysBetween(firstDate, new Date());
+
+        const result = days.reduce((accum, d) => {
+            return {
+                history: [
+                    ...accum.history,
+                    {
+                        date: d,
+                        stockLevel: (accum.stockLevel ||  0 ) + (manufacturedByDate[d] || 0) - (administeredByDate[d] || 0)
+                    }
+                ],
+                stockLevel: (accum.stockLevel ||  0 ) + (manufacturedByDate[d] || 0) - (administeredByDate[d] || 0)
+            };
+        }, {
+            history: [{ date: since.toISOString().substring(0, 10), stockLevel: initialLevel }],
+            stockLevel: initialLevel
+        });
+
+
+        return result;
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // Ensures that the client will close when you finish/error
+        if (mongodb) await mongodb.close();
+    }
 
 }
 
@@ -234,5 +597,6 @@ module.exports = {
     list,
     addItemActivity,
     updateBatchItem,
-    count
+    count,
+    getStockLevel
 };

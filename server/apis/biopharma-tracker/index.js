@@ -9,6 +9,8 @@ const itemsRouter = require("./routes/items");
 const stampRouter = require("./routes/notifications")
 const aiRouter = require("./routes/ai")
 
+const { getStockLevel } = require("./services/items")
+
 const app = express();
 app.use(cors());
 app.use(express.json())
@@ -23,6 +25,19 @@ app.use('/batches', batchRouter);
 app.use('/batches/:batchId/items', itemsRouter);
 app.use('/stamp', stampRouter);
 app.use('/ai', aiRouter);
+
+app.get('/stockLevel/:productId', async (req, res, next) => {
+  const since = new Date();
+  since.setDate((new Date()).getDate() - 30);
+
+  console.log('Since', since.toISOString());
+
+  const { productId } = req.params;
+
+  const stockLevels = await getStockLevel(since, productId);
+
+  res.json(stockLevels);
+})
 
 // Swagger
 app.use('/api-docs', swaggerUi.serve);

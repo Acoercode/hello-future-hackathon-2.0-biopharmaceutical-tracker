@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { QrReader } from "react-qr-reader";
+import React from "react";
+import { Scanner } from "@yudiel/react-qr-scanner";
 
-const OperatorScan: React.FC = () => {
-  const [data, setData] = useState("No result");
-  console.log("DATA", data);
+interface OperatorScanProps {
+  setData: any;
+}
 
+const OperatorScan: React.FC<OperatorScanProps> = ({ setData }) => {
   return (
-    <QrReader
-      onResult={(result, error) => {
-        // @ts-ignore
-        setData(result?.text);
+    //@ts-ignore
+    <Scanner
+      constraints={{
+        advanced: [{ facingMode: "environment" }],
       }}
-      // @ts-ignore
-      style={{ width: "100%" }}
-      videoStyle={{ height: "80%" }}
-      constraints={{ facingMode: "environment" }}
+      onScan={(result) =>
+        setData(result && result.length && result[0].rawValue)
+      }
     />
   );
 };

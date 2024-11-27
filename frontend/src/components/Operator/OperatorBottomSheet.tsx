@@ -18,7 +18,7 @@ interface OperatorBottomSheetProps {
 const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({ data }) => {
   const ref = useRef<SheetRef>();
   const [isOpen] = useState(true);
-  const snapPoints = [-70, 0.45];
+  const snapPoints = [-70, 0.45, 0.2];
   const initialSnap = 1;
   const snapTo = (i: number) => ref.current?.snapTo(i);
   const close = () => snapTo(1);

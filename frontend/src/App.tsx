@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
 import { getDesignTokens } from "./styles/theme";
+import { isMobile } from "react-device-detect";
 
 // redux
 import { defaultStore } from "./store/defaultStore";
@@ -12,6 +13,7 @@ import AdminBatchOverviewView from "./views/AdminBatchOverviewView";
 import AdminBatchDetailView from "./views/AdminBatchDetailView";
 import AdminCreateBatchView from "./views/AdminCreateBatchView";
 import type {} from "redux-thunk/extend-redux";
+import OperatorOverviewView from "./views/OperatorOverviewView";
 
 function App() {
   const initialModeState: string | (() => string) = "light";
@@ -23,12 +25,21 @@ function App() {
     [mode],
   );
 
+  const url = window.location.pathname;
+  useEffect(() => {
+    if (url === "/") {
+      isMobile
+        ? (window.location.href = "/operator")
+        : (window.location.href = "/admin");
+    }
+  }, [url]);
   return (
     <BrowserRouter>
       <Provider store={defaultStore}>
         <ThemeProvider theme={theme}>
           <Routes>
-            <Route exact path="/" element={<AdminBatchOverviewView />} />
+            <Route exact path="/admin" element={<AdminBatchOverviewView />} />
+            <Route exact path="/operator" element={<OperatorOverviewView />} />
             <Route
               exact
               path="/admin/create"

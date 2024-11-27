@@ -15,7 +15,7 @@ const AdminBatchDetailView: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/admin");
   };
   return (
     <Grid container justifyContent={"center"} spacing={4}>

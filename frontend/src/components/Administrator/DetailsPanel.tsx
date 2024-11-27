@@ -1,7 +1,12 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 // components and helpers
 import utils from "../../utils/utils";
+import QrCodeDialog from "./QrCodeDialog";
+import { adminActions } from "./AdminActions";
+import Trustness from "../Actions/Trustness";
 
 // mui
 import Grid from "@mui/material/Grid2";
@@ -11,7 +16,6 @@ import Button from "@mui/material/Button";
 import { Divider } from "@mui/material";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import Stack from "@mui/material/Stack";
-import Trustness from "../Actions/Trustness";
 
 interface BatchDetailsPanelProps {
   details: any;
@@ -19,6 +23,15 @@ interface BatchDetailsPanelProps {
 }
 
 const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const [openQr, setOpenQr] = React.useState(false);
+
+  const handleBatchQrCode = () => {
+    dispatch(adminActions?.getBatchQrCode(id));
+    setOpenQr(true);
+  };
+
   const renderValues = () => {
     const acceptedValues = [
       "productId",
@@ -98,6 +111,7 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
                   variant={"outlined"}
                   startIcon={<QrCodeIcon />}
                   color={"inherit"}
+                  onClick={handleBatchQrCode}
                 >
                   Master QR Code
                 </Button>
@@ -114,6 +128,7 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
           </Grid>
         </Grid>
       </Grid>
+      <QrCodeDialog open={openQr} handleClose={() => setOpenQr(false)} />
     </Paper>
   );
 };

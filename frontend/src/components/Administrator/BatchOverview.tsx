@@ -7,12 +7,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { IconCount } from "./IconCount";
 import { adminActions } from "./AdminActions";
 import utils from "../../utils/utils";
-
+import Trustness from "../Actions/Trustness";
+import administeredIcon from "../../assets/images/administeredIcon.svg";
+import manufacturedIcon from "../../assets/images/manufacturedIcon.svg";
 // mui
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import Trustness from "../Actions/Trustness";
+import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import BatchOverviewRiskPanel from "./BatchOverviewRiskPanel";
 
 const BatchOverview: React.FC = () => {
   const navigate = useNavigate();
@@ -26,22 +31,16 @@ const BatchOverview: React.FC = () => {
 
   const statusData = [
     {
-      title: "Total Batches",
+      title: "Batches Manufactured",
       color: "#0b0b0b",
       data: 200,
-      image: "https://placehold.co/400",
+      image: manufacturedIcon,
     },
     {
-      title: "Active Batches",
+      title: "Batches Administered",
       color: "#0b0b0b",
       data: 100,
-      image: "https://placehold.co/400",
-    },
-    {
-      title: "Inactive Batches",
-      color: "#0b0b0b",
-      data: 100,
-      image: "https://placehold.co/400",
+      image: administeredIcon,
     },
   ];
 
@@ -181,29 +180,49 @@ const BatchOverview: React.FC = () => {
     },
     viewColumns: false,
     print: false,
+    rowsPerPage: 5,
+    rowsPerPageOptions: [5, 10, 15],
   };
 
   return (
     <Grid container justifyContent={"center"} spacing={3}>
-      {statusData.map((data, i) => (
-        <IconCount count={data} data={data.data} width={4} key={`count-${i}`} />
-      ))}
-      <Grid size={12}>
-        <MUIDataTable
-          title={
-            <Button
-              variant={"contained"}
-              sx={{ fontWeight: "bold" }}
-              startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
-              onClick={() => navigate("/admin/create")}
-            >
-              Create New Batch
-            </Button>
-          }
-          data={batchList || []}
-          columns={columns}
-          options={options}
-        />
+      <Grid size={8}>
+        <Grid container spacing={3}>
+          <Grid size={12}>
+            <Stack direction={"row"} spacing={3}>
+              {statusData.map((data, i) => (
+                <IconCount
+                  count={data}
+                  data={data.data}
+                  width={6}
+                  key={`count-${i}`}
+                />
+              ))}
+            </Stack>
+          </Grid>
+          <Grid size={12}>
+            <MUIDataTable
+              title={
+                <Button
+                  variant={"contained"}
+                  sx={{ fontWeight: "bold" }}
+                  startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
+                  onClick={() => navigate("/admin/create")}
+                >
+                  Create New Batch
+                </Button>
+              }
+              data={batchList || []}
+              columns={columns}
+              options={options}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2 }}>
+          <BatchOverviewRiskPanel />
+        </Paper>
       </Grid>
     </Grid>
   );

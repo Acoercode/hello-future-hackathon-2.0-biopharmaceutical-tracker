@@ -85,11 +85,25 @@
 }
 
 /*loading animation*/
-/* HTML: <div class="loader"></div> */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /*background-color: rgba(255, 255, 255, 0.3); !* Light blurred background *!*/
+  background-color: #0b0b0b99; /* Light blurred background */
+  /*backdrop-filter: blur(4px); !* Blur effect *!*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above all other elements */
+}
+
 .loader {
   width: 35px;
   aspect-ratio: 1;
-  --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000);
+  --_g: no-repeat radial-gradient(circle closest-side, #ffdb58 90%, #ffdb58);
   background:
     var(--_g) 0 0,
     var(--_g) 0 100%,

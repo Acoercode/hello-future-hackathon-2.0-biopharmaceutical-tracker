@@ -12,6 +12,7 @@ export const types = {
   RECORD_ACTIVITY_REQUEST: "RECORD_ACTIVITY_REQUEST",
   RECORD_ACTIVITY_SUCCESS: "RECORD_ACTIVITY_SUCCESS",
   RECORD_ACTIVITY_FAILURE: "RECORD_ACTIVITY_FAILURE",
+  CLEAR_RECORDED_ACTIVITY: "CLEAR_RECORDED_ACTIVITY",
 };
 
 // @ts-ignore
@@ -55,10 +56,17 @@ export const recordActivity: ActionCreator<
     }
   };
 
+export const clearRecordedActivity = () => {
+  return {
+    type: types.CLEAR_RECORDED_ACTIVITY,
+  };
+};
+
 // @ts-ignore
 export const operatorActions: ActionCreatorsMapObject<
   // @ts-ignore
   ThunkAction<Promise<any>, IOperatorState, null, IOperatorAction>
 > = {
   recordActivity,
+  clearRecordedActivity,
 };

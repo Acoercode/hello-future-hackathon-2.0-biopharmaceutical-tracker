@@ -18,15 +18,6 @@ const OperatorOverviewView: React.FC = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState<any>(null);
 
-  // const demoData = {
-  //   id: "fe07070e-4abb-4402-9971-e7192a63b084",
-  //   brand: "LA ROCHE",
-  //   productId: "VC-024",
-  //   productType: "VACCINE",
-  //   expirationDate: "2025/08/06",
-  //   numberOfItems: 10,
-  // };
-
   useEffect(() => {
     if (data && data.id) {
       const id = data.id;
@@ -37,6 +28,7 @@ const OperatorOverviewView: React.FC = () => {
 
   const handleRestart = () => {
     setData(null);
+    dispatch(operatorActions?.clearRecordedActivity());
   };
 
   const handleSubmit = (activityData: any) => {

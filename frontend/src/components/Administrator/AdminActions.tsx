@@ -340,13 +340,11 @@ export const getBatchQrCode: ActionCreator<
     }
   };
 export const clearBatchDetails = () => {
-  console.log("CLEARING BATCH DETAILS");
   return {
     type: types.CLEAR_BATCH_DETAILS,
   };
 };
 export const clearItemDetails = () => {
-  console.log("CLEARING ITEMS DETAILS");
   return {
     type: types.CLEAR_ITEM_DETAILS,
   };

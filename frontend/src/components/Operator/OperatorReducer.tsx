@@ -32,6 +32,12 @@ export const operatorReducer: Reducer<IOperatorState, IOperatorAction> = (
         recordActivityError: action.error,
       };
     }
+    case types.CLEAR_RECORDED_ACTIVITY: {
+      return {
+        ...state,
+        recordedActivity: null,
+      };
+    }
     default:
       return state;
   }

@@ -43,15 +43,11 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   const snapTo = (i: number) => ref.current?.snapTo(i);
   const close = () => snapTo(1);
 
-  console.log("data", data);
-  console.log("batchDetails", batchDetails);
-  console.log("recordedActivity", recordedActivity);
-
   useEffect(() => {
-    if (data) {
-      snapTo(0);
-    } else if (recordedActivity) {
+    if (data && recordedActivity) {
       snapTo(1);
+    } else if (data) {
+      snapTo(0);
     } else {
       snapTo(2);
     }
@@ -173,7 +169,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
           {statusInputs &&
             statusInputs.length &&
             statusInputs[0].inputs.map((item: any) => (
-              <FormControl fullWidth>
+              <FormControl fullWidth key={`input-${item.id}`}>
                 <Typography>{item.label}</Typography>
                 <TextField
                   id={item.id}
@@ -208,22 +204,33 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   };
 
   const renderRecordedActivity = () => {
-    const activities = recordedActivity.activities.pop();
+    let activities: any = [];
+    if (
+      recordedActivity &&
+      recordedActivity.activities &&
+      recordedActivity.activities.length
+    ) {
+      const clonedActivities = [...recordedActivity.activities]; // Clone the array
+      if (clonedActivities.length > 1) {
+        activities = clonedActivities.pop(); // Safe operation on the cloned array
+      } else if (clonedActivities.length === 1) {
+        activities = clonedActivities[0]; // Retrieve the only item
+      }
+    }
+
     if (activities) {
       return (
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
-          {recordedActivity &&
-            recordedActivity.activities &&
-            Object.keys(activities).map((item: any) => (
-              <ListItem>
-                <ListItemText
-                  primary={utils.toTitleText(item)}
-                  secondary={activities[item]}
-                />
-              </ListItem>
-            ))}
+          {Object.keys(activities).map((item: any) => (
+            <ListItem key={`input-${item}`}>
+              <ListItemText
+                primary={utils.toTitleText(item)}
+                secondary={activities[item]}
+              />
+            </ListItem>
+          ))}
         </List>
       );
     }
@@ -242,6 +249,12 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
           <Sheet.Header />
           <Sheet.Content style={{ paddingBottom: ref.current?.y }}>
             <Sheet.Scroller draggableAt="both">
+              {/* Loading Overlay */}
+              {recordActivityLoading && (
+                <div className="loading-overlay">
+                  <div className="loader"></div>
+                </div>
+              )}
               {!data && !recordedActivity && (
                 <Stack sx={{ p: 2 }} spacing={2}>
                   <Typography variant={"h6"}>Scan QR Code</Typography>
@@ -252,7 +265,6 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   <img src={scanImage} alt="" height={190} />
                 </Stack>
               )}
-              {recordActivityLoading && <div className={"loader"} />}
               {recordedActivity && (
                 <Stack sx={{ p: 2 }} spacing={2}>
                   {renderHeader}

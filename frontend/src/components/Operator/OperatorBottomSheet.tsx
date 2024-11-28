@@ -38,6 +38,10 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   const [isOpen] = useState(true);
   const [inputData, setInputData] = useState<any>({});
   const [statusInputs, setStatusInputs] = useState<any>({});
+  const [locationGeo, setLocationGeo] = useState<{}>({
+    latitude: null,
+    longitude: null,
+  });
   const snapPoints = [-70, -200, 0.45, 0.2];
   const initialSnap = 1;
   const snapTo = (i: number) => ref.current?.snapTo(i);
@@ -52,6 +56,26 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
       snapTo(2);
     }
   }, [data, recordedActivity]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationGeo({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        },
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
+  console.log("Location:", locationGeo);
 
   useEffect(() => {
     if (batchDetails && batchDetails.status) {
@@ -87,6 +111,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     setInputData({
       ...inputData,
       status: data && data.length && data[0].currentStatus.toUpperCase(),
+      geoLocation: locationGeo,
     });
   };
 

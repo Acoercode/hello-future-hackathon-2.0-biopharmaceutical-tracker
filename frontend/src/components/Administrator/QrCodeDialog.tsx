@@ -22,6 +22,10 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
   handleClose,
 }) => {
   const qrCode = useSelector((state: any) => state.admin.batchQrCode);
+  const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
+
+  console.log("qrCode", qrCode);
+  console.log("itemQr", itemQrCodes);
 
   return (
     <Dialog
@@ -43,7 +47,9 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
       >
         <Grid size={"auto"} sx={{ pl: 3, pb: 2 }}>
           <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
-            Master QR Code
+            {itemQrCodes && itemQrCodes.length
+              ? "Unit QR Codes"
+              : "Master QR Code"}
           </Typography>
         </Grid>
         <Grid size={"auto"}>
@@ -73,14 +79,27 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
           <Divider color={"gray"} />
         </Grid>
       </Grid>
-      <Grid
-        container
-        justifyContent={"center"}
-        spacing={2}
-        sx={{ backgroundColor: "#252525", p: 3 }}
-      >
-        <img src={qrCode} alt="QR Code" />
-      </Grid>
+      {itemQrCodes && itemQrCodes.length ? (
+        <Grid
+          container
+          justifyContent={"center"}
+          spacing={2}
+          sx={{ backgroundColor: "#252525", p: 3 }}
+        >
+          {itemQrCodes.map((qr: any, index: number) => (
+            <img key={index} src={qr} alt="QR Code" height={200} />
+          ))}
+        </Grid>
+      ) : (
+        <Grid
+          container
+          justifyContent={"center"}
+          spacing={2}
+          sx={{ backgroundColor: "#252525", p: 3 }}
+        >
+          <img src={qrCode} alt="QR Code" />
+        </Grid>
+      )}
     </Dialog>
   );
 };

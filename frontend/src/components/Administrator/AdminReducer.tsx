@@ -116,6 +116,15 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
     //   };
     // }
     case types.GET_BATCH_QR_REQUEST: {
+      if (action.itemId) {
+        return {
+          ...state,
+          itemQrLoading: {
+            ...state.itemQrLoading,
+            [action.itemId]: true,
+          },
+        };
+      }
       return {
         ...state,
         batchQrLoading: true,
@@ -126,6 +135,20 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         ...state,
         batchQrLoading: false,
         batchQrCode: action.payload?.data,
+      };
+    }
+    case types.GET_BATCH_ITEMS_QR_SUCCESS: {
+      console.log("state", state);
+      return {
+        ...state,
+        itemQrLoading: {
+          ...state.itemQrLoading,
+          // @ts-ignore
+          [action.itemId]: false,
+        },
+        itemQrCodes: state.itemQrCodes
+          ? [...state.itemQrCodes, action.payload?.data]
+          : [action.payload?.data],
       };
     }
     case types.GET_BATCH_QR_FAILURE: {
@@ -146,6 +169,12 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
       return {
         ...state,
         itemDetails: null,
+      };
+    case types.CLEAR_QR_CODES:
+      return {
+        ...state,
+        qrCode: null,
+        itemQrCodes: [],
       };
     default:
       return state;

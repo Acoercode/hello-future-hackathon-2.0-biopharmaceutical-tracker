@@ -3,7 +3,7 @@ import MUIDataTable from "mui-datatables";
 import { useDispatch } from "react-redux";
 
 // components and helpers
-import { adminActions } from "./AdminActions";
+import { adminActions, clearQrCodes, getBatchQrCode } from "./AdminActions";
 import utils from "../../utils/utils";
 
 // mui
@@ -12,6 +12,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import Trustness from "../Actions/Trustness";
+import { useParams } from "react-router-dom";
+import QrCodeDialog from "./QrCodeDialog";
 
 interface BatchItemsListProps {
   items: any;
@@ -23,11 +25,26 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
   setSelectedItemId,
 }) => {
   const dispatch = useDispatch();
+  const { id } = useParams();
+  const [openQr, setOpenQr] = React.useState(false);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleItemQrCodes = () => {
+    const itemIds = items.map((item: { _id: any }) => item._id);
+    itemIds.map((itemId: any) => {
+      dispatch(adminActions?.getBatchQrCode(id, itemId));
+    });
+    setOpenQr(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenQr(false);
+    dispatch(adminActions?.clearQrCodes());
+  };
 
   const columns = [
     {
@@ -138,6 +155,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
             startIcon={<QrCodeIcon />}
             variant={"outlined"}
             color={"inherit"}
+            onClick={handleItemQrCodes}
           >
             Item QR Codes
           </Button>
@@ -160,6 +178,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
           options={options}
         />
       </Grid>
+      <QrCodeDialog open={openQr} handleClose={handleCloseDialog} />
     </Grid>
   );
 };

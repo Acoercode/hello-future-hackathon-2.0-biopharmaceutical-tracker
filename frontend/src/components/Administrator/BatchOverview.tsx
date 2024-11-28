@@ -220,7 +220,7 @@ const BatchOverview: React.FC = () => {
         </Grid>
       </Grid>
       <Grid size={4}>
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{ p: 2, height: "100%" }}>
           <BatchOverviewRiskPanel />
         </Paper>
       </Grid>

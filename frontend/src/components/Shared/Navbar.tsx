@@ -21,18 +21,15 @@ export default function Navbar() {
         }}
       >
         <Toolbar sx={{ height: "100%", position: "relative" }}>
-          {/* Logo on the left */}
           <Box
             sx={{
               display: "flex",
-              alignItems: "center", // Center vertically
+              alignItems: "center",
               height: "100%",
             }}
           >
             <img src={logo} alt="Logo" height={pathname ? 40 : 60} />
           </Box>
-
-          {/* Centered Typography */}
           {pathname && (
             <Typography
               variant="h6"
@@ -48,8 +45,6 @@ export default function Navbar() {
               Status Update
             </Typography>
           )}
-
-          {/* Spacer Box to maintain layout balance */}
           <Box />
         </Toolbar>
       </AppBar>

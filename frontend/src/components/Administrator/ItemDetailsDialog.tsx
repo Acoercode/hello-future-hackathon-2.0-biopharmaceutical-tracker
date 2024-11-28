@@ -109,20 +109,20 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
         </Grid>
         <Grid size={"auto"}>
           <Stack direction={"row"} spacing={2}>
-            <Button
-              variant={"outlined"}
-              color={"inherit"}
-              startIcon={<ShareRoundedIcon />}
-            >
-              Share
-            </Button>
-            <Button
-              variant={"contained"}
-              color={"primary"}
-              startIcon={<PrintRoundedIcon />}
-            >
-              Print
-            </Button>
+            {/*<Button*/}
+            {/*  variant={"outlined"}*/}
+            {/*  color={"inherit"}*/}
+            {/*  startIcon={<ShareRoundedIcon />}*/}
+            {/*>*/}
+            {/*  Share*/}
+            {/*</Button>*/}
+            {/*<Button*/}
+            {/*  variant={"contained"}*/}
+            {/*  color={"primary"}*/}
+            {/*  startIcon={<PrintRoundedIcon />}*/}
+            {/*>*/}
+            {/*  Print*/}
+            {/*</Button>*/}
             <IconButton color={"inherit"} onClick={handleClose}>
               <CloseRoundedIcon />
             </IconButton>

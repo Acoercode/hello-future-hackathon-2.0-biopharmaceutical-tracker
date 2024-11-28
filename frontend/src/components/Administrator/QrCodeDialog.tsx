@@ -7,7 +7,6 @@ import Dialog from "@mui/material/Dialog";
 import { Divider, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
@@ -24,13 +23,8 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
 }) => {
   const qrCode = useSelector((state: any) => state.admin.batchQrCode);
   const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
-  const [isPrinting, setIsPrinting] = useState(false);
-  const printRef = useRef(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
-
-  console.log("qrCode", qrCode);
-  console.log("itemQr", itemQrCodes);
 
   return (
     <Dialog
@@ -59,13 +53,13 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
         </Grid>
         <Grid size={"auto"}>
           <Stack direction={"row"} spacing={2}>
-            <Button
-              variant={"outlined"}
-              color={"inherit"}
-              startIcon={<ShareRoundedIcon />}
-            >
-              Share
-            </Button>
+            {/*<Button*/}
+            {/*  variant={"outlined"}*/}
+            {/*  color={"inherit"}*/}
+            {/*  startIcon={<ShareRoundedIcon />}*/}
+            {/*>*/}
+            {/*  Share*/}
+            {/*</Button>*/}
             {/*// @ts-ignore*/}
             <Button
               variant={"contained"}

@@ -25,13 +25,14 @@ export default function Navbar() {
               display: "flex",
               alignItems: "center",
               height: "100%",
+              ml: 5,
             }}
           >
-            <img src={logo} alt="Logo" height={pathname ? 40 : 60} />
+            <img src={logo} alt="Logo" height={pathname ? 40 : 45} />
           </Box>
           {pathname && (
             <Typography
-              variant="h6"
+              variant="body1"
               color="white"
               sx={{
                 position: "absolute",

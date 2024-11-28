@@ -10,6 +10,7 @@ declare module "moment/*";
 declare module "mui-datatables";
 declare module "redux-thunk/extend-redux";
 declare module "react-leaflet/*";
+declare module "@mui/x-charts/*";
 declare module "*.png";
 declare module "*.mov";
 declare module "*.mp4";

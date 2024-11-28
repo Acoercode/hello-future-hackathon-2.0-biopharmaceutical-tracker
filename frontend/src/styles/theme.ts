@@ -20,6 +20,11 @@ export const getDesignTokens = (mode: string) => ({
           text: {
             primary: "#fff",
             secondary: "#999ba8",
+            disabled: "#0b0b0b",
+          },
+          action: {
+            disabledBackground: "#252525",
+            disabled: "#0b0b0b",
           },
         }
       : {

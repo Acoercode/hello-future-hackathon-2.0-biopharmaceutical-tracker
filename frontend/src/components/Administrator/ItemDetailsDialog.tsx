@@ -135,10 +135,10 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
         spacing={2}
         sx={{ backgroundColor: "#252525", p: 3 }}
       >
-        <Grid size={3.5}>
+        <Grid size={{ xs: 12, md: 3.5 }}>
           <TrackingPanel details={itemDetails} title={"Unit Tracking"} />
         </Grid>
-        <Grid size={8.5}>
+        <Grid size={{ xs: 12, md: 8.5 }}>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid size={12}>
               <DetailsPanel details={itemDetails} title={"Unit Details"} />

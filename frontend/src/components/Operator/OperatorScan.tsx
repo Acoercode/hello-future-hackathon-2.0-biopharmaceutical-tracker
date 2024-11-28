@@ -13,7 +13,7 @@ const OperatorScan: React.FC<OperatorScanProps> = ({ setData }) => {
         advanced: [{ facingMode: "environment" }],
       }}
       onScan={(result) =>
-        setData(result && result.length && result[0].rawValue)
+        setData(result && result.length && JSON.parse(result[0].rawValue))
       }
     />
   );

@@ -3,7 +3,7 @@ import { types } from "./AdminActions";
 import { IAdminState, IAdminAction } from "../../common/model/AdminModels";
 
 // @ts-ignore
-export const adminReducer: Reducer<IWorkspaceState, IWorkspaceAction> = (
+export const adminReducer: Reducer<IAdminState, IAdminAction> = (
   state: IAdminState = {},
   action: IAdminAction,
 ) => {

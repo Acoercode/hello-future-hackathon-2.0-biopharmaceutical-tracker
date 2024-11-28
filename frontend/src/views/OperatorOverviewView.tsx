@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 // components and helpers
 import ComponentWrapper from "../containers/ComponentWrapper";
 import OperatorScan from "../components/Operator/OperatorScan";
 import OperatorBottomSheet from "../components/Operator/OperatorBottomSheet";
+import { adminActions } from "../components/Administrator/AdminActions";
 
 // mui
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import Stack from "@mui/material/Stack";
+import { operatorActions } from "../components/Operator/OperatorActions";
 
 const OperatorOverviewView: React.FC = () => {
-  const [data, setData] = useState("");
-
-  const handleRestart = () => {
-    setData("");
-  };
+  const dispatch = useDispatch();
+  const [data, setData] = useState<any>(null);
 
   // const demoData = {
   //   id: "fe07070e-4abb-4402-9971-e7192a63b084",
@@ -26,6 +26,23 @@ const OperatorOverviewView: React.FC = () => {
   //   expirationDate: "2025/08/06",
   //   numberOfItems: 10,
   // };
+
+  useEffect(() => {
+    if (data && data.id) {
+      const id = data.id;
+      dispatch(adminActions?.getBatchDetails(id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  const handleRestart = () => {
+    setData(null);
+  };
+
+  const handleSubmit = (activityData: any) => {
+    dispatch(operatorActions?.recordActivity(data.id, activityData));
+  };
+
   return (
     <Grid container justifyContent={"center"} spacing={4}>
       {!data ? (
@@ -41,8 +58,7 @@ const OperatorOverviewView: React.FC = () => {
         </Stack>
       )}
       <Grid size={12}>
-        <OperatorBottomSheet data={data && JSON.parse(data)} />
-        {/*<OperatorBottomSheet data={demoData} />*/}
+        <OperatorBottomSheet data={data} handleSubmit={handleSubmit} />
       </Grid>
     </Grid>
   );

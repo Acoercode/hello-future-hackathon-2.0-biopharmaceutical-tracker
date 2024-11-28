@@ -46,7 +46,7 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
         return null;
       }
       return (
-        <Grid size={2.3} key={`details-${i}`}>
+        <Grid size={{ xs: 6, md: 2.3 }} key={`details-${i}`}>
           <Typography variant={"body2"} sx={{ fontWeight: "bold" }}>
             {utils.toTitleText(key)}
           </Typography>

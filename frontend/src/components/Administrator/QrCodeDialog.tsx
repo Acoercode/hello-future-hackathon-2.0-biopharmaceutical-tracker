@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 // mui
@@ -11,6 +11,7 @@ import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
+import { useReactToPrint } from "react-to-print";
 
 interface ItemDetailsDialogProps {
   open: boolean;
@@ -23,6 +24,10 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
 }) => {
   const qrCode = useSelector((state: any) => state.admin.batchQrCode);
   const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const printRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   console.log("qrCode", qrCode);
   console.log("itemQr", itemQrCodes);
@@ -61,10 +66,12 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
             >
               Share
             </Button>
+            {/*// @ts-ignore*/}
             <Button
               variant={"contained"}
               color={"primary"}
               startIcon={<PrintRoundedIcon />}
+              onClick={reactToPrintFn}
             >
               Print
             </Button>
@@ -79,27 +86,29 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
           <Divider color={"gray"} />
         </Grid>
       </Grid>
-      {itemQrCodes && itemQrCodes.length ? (
-        <Grid
-          container
-          justifyContent={"center"}
-          spacing={2}
-          sx={{ backgroundColor: "#252525", p: 3 }}
-        >
-          {itemQrCodes.map((qr: any, index: number) => (
-            <img key={index} src={qr} alt="QR Code" height={200} />
-          ))}
-        </Grid>
-      ) : (
-        <Grid
-          container
-          justifyContent={"center"}
-          spacing={2}
-          sx={{ backgroundColor: "#252525", p: 3 }}
-        >
-          <img src={qrCode} alt="QR Code" />
-        </Grid>
-      )}
+      <Grid ref={contentRef}>
+        {itemQrCodes && itemQrCodes.length ? (
+          <Grid
+            container
+            justifyContent={"center"}
+            spacing={2}
+            sx={{ backgroundColor: "#252525", p: 3 }}
+          >
+            {itemQrCodes.map((qr: any, index: number) => (
+              <img key={index} src={qr} alt="QR Code" height={200} />
+            ))}
+          </Grid>
+        ) : (
+          <Grid
+            container
+            justifyContent={"center"}
+            spacing={2}
+            sx={{ backgroundColor: "#252525", p: 3 }}
+          >
+            <img src={qrCode} alt="QR Code" />
+          </Grid>
+        )}
+      </Grid>
     </Dialog>
   );
 };

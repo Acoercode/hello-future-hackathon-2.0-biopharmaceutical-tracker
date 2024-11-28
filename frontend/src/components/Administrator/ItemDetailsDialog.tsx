@@ -36,9 +36,14 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
   const itemDetails = useSelector((state: any) => state.admin.itemDetails);
 
   useEffect(() => {
+    return () => dispatch(adminActions?.clearItemDetails());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     dispatch(adminActions?.getItemDetails(id, itemId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [itemId]);
 
   return (
     <Dialog

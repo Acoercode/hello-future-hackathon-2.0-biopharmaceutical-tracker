@@ -8,7 +8,6 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
   action: IAdminAction,
 ) => {
   switch (action.type) {
-    // WORKSPACE STORE
     case types.GET_BATCH_LIST_REQUEST: {
       return {
         ...state,
@@ -19,7 +18,7 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
       return {
         ...state,
         batchListLoading: false,
-        batchList: action.payload?.data,
+        batchList: [...action.payload?.data.items],
       };
     }
     case types.GET_BATCH_LIST_FAILURE: {
@@ -59,7 +58,7 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
       return {
         ...state,
         batchItemsLoading: false,
-        batchItems: action.payload?.data,
+        batchItems: [...action.payload?.data.items],
       };
     }
     case types.GET_BATCH_ITEMS_FAILURE: {
@@ -67,26 +66,6 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         ...state,
         batchItemsLoading: false,
         batchItemsError: action.error,
-      };
-    }
-    case types.GET_BATCH_ACTIVITY_REQUEST: {
-      return {
-        ...state,
-        batchActivityLoading: true,
-      };
-    }
-    case types.GET_BATCH_ACTIVITY_SUCCESS: {
-      return {
-        ...state,
-        batchActivityLoading: false,
-        batchActivity: action.payload?.data,
-      };
-    }
-    case types.GET_BATCH_ACTIVITY_FAILURE: {
-      return {
-        ...state,
-        batchActivityLoading: false,
-        batchActivityError: action.error,
       };
     }
     case types.GET_ITEMS_DETAIL_REQUEST: {
@@ -109,33 +88,33 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         itemDetailsError: action.error,
       };
     }
-    case types.GET_TRUST_REQUEST: {
-      return {
-        ...state,
-        [`trustLoading_${action.payload?.id}`]: true,
-      };
-    }
-    case types.GET_TRUST_SUCCESS_ITEMS: {
-      return {
-        ...state,
-        [`trustLoading_${action.payload?.id}`]: false,
-        itemsTrustList: [...state.itemsTrustList, action.payload?.data],
-      };
-    }
-    case types.GET_TRUST_SUCCESS_BATCH: {
-      return {
-        ...state,
-        [`trustLoading_${action.payload?.id}`]: false,
-        batchTrust: action.payload?.data,
-      };
-    }
-    case types.GET_TRUST_FAILURE: {
-      return {
-        ...state,
-        [`trustLoading_${action.payload?.id}`]: false,
-        itemDetailsError: action.error,
-      };
-    }
+    // case types.GET_TRUST_REQUEST: {
+    //   return {
+    //     ...state,
+    //     [`trustLoading_${action.payload?.id}`]: true,
+    //   };
+    // }
+    // case types.GET_TRUST_SUCCESS_ITEMS: {
+    //   return {
+    //     ...state,
+    //     [`trustLoading_${action.payload?.id}`]: false,
+    //     itemsTrustList: [...(state.itemsTrustList || []), action.payload?.data],
+    //   };
+    // }
+    // case types.GET_TRUST_SUCCESS_BATCH: {
+    //   return {
+    //     ...state,
+    //     [`trustLoading_${action.payload?.id}`]: false,
+    //     batchTrust: action.payload?.data,
+    //   };
+    // }
+    // case types.GET_TRUST_FAILURE: {
+    //   return {
+    //     ...state,
+    //     [`trustLoading_${action.payload?.id}`]: false,
+    //     itemDetailsError: action.error,
+    //   };
+    // }
     case types.GET_BATCH_QR_REQUEST: {
       return {
         ...state,
@@ -156,6 +135,18 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         batchQrError: action.error,
       };
     }
+    case types.CLEAR_BATCH_DETAILS:
+      return {
+        ...state,
+        batchDetails: null, // or initial value
+        batchItems: [],
+        batchActivity: [],
+      };
+    case types.CLEAR_ITEM_DETAILS:
+      return {
+        ...state,
+        itemDetails: null,
+      };
     default:
       return state;
   }

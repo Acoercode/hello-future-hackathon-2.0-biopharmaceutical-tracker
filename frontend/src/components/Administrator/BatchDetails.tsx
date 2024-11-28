@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
-
-// mui
-import Grid from "@mui/material/Grid2";
-import { useDispatch, useSelector } from "react-redux";
 import { adminActions } from "./AdminActions";
 import TrackingPanel from "./TrackingPanel";
 import DetailsPanel from "./DetailsPanel";
 import BatchItemsList from "./BatchItemsList";
 import DetailsMapPanel from "./DetailsMapPanel";
 import ItemDetailsDialog from "./ItemDetailsDialog";
+
+// mui
+import Grid from "@mui/material/Grid2";
 
 const BatchDetails: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,19 +20,16 @@ const BatchDetails: React.FC = () => {
   const batchItems = useSelector((state: any) => state.admin.batchItems);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedItemId, setSelectedItemId] = React.useState("");
-  // const batchActivity = useSelector((state: any) => state.admin.batchActivity);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchDetails(id));
     dispatch(adminActions?.getBatchItems(id));
-    // dispatch(adminActions?.getBatchActivity(id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleRowClick = (itemId: string) => {
-    setSelectedItemId(id);
+    setSelectedItemId(itemId);
     setOpenDialog(true);
-    dispatch(adminActions?.getItemDetails(id, itemId));
   };
 
   return (

@@ -3,7 +3,7 @@ import MUIDataTable from "mui-datatables";
 import { useDispatch } from "react-redux";
 
 // components and helpers
-import { adminActions, clearQrCodes, getBatchQrCode } from "./AdminActions";
+import { adminActions } from "./AdminActions";
 import utils from "../../utils/utils";
 
 // mui
@@ -35,9 +35,10 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
 
   const handleItemQrCodes = () => {
     const itemIds = items.map((item: { _id: any }) => item._id);
-    itemIds.map((itemId: any) => {
+    itemIds.forEach((itemId: any) => {
       dispatch(adminActions?.getBatchQrCode(id, itemId));
     });
+
     setOpenQr(true);
   };
 

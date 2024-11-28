@@ -2,7 +2,6 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Stack from "@mui/material/Stack";
 import logo from "../../assets/images/BioPharmaTrackerLogo_Desktop.png";
 import Typography from "@mui/material/Typography";
 

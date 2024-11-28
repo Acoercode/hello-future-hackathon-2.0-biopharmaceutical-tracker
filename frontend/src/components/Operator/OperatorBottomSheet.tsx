@@ -11,7 +11,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
 import Chip from "@mui/material/Chip";
-import { Divider, FormControl, FormHelperText, TextField } from "@mui/material";
+import { Divider, FormControl, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -117,6 +117,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
       setStatusInputs(statusInputs);
       createInputData(statusInputs[0].inputs, statusInputs);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
 
   const createInputData = (fields: any, data: any) => {
@@ -301,6 +302,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                 </ListItem>
               );
             }
+            return null;
           })}
         </List>
       );

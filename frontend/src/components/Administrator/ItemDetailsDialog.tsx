@@ -13,10 +13,7 @@ import Trustness from "../Actions/Trustness";
 import Grid from "@mui/material/Grid2";
 import Dialog from "@mui/material/Dialog";
 import { Divider, IconButton } from "@mui/material";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
-import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
 

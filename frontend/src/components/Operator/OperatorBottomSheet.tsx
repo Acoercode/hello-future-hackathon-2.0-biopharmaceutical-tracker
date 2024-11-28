@@ -38,6 +38,15 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   const [isOpen] = useState(true);
   const [inputData, setInputData] = useState<any>({});
   const [statusInputs, setStatusInputs] = useState<any>({});
+  const [address, setAddress] = useState("Fetching address...");
+  const [addressError, setAddressError] = useState<boolean>(false);
+  const [locationGeo, setLocationGeo] = useState<{
+    latitude: any;
+    longitude: any;
+  }>({
+    latitude: null,
+    longitude: null,
+  });
   const snapPoints = [-70, -200, 0.45, 0.2];
   const initialSnap = 1;
   const snapTo = (i: number) => ref.current?.snapTo(i);
@@ -54,6 +63,51 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   }, [data, recordedActivity]);
 
   useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationGeo({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        },
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${locationGeo.latitude}&lon=${locationGeo.longitude}&format=json`;
+      try {
+        const response = await fetch(url, {
+          headers: {
+            "User-Agent": "YourAppName", // Add a user agent
+          },
+        });
+        const data = await response.json();
+        if (data && data.display_name) {
+          setAddress(data.display_name);
+        } else {
+          setAddress("");
+          setAddressError(true);
+        }
+      } catch (error) {
+        console.error("Error fetching address:", error);
+        setAddress("");
+        setAddressError(true);
+      }
+    };
+    if (locationGeo.latitude && locationGeo.longitude) {
+      fetchAddress();
+    }
+  }, [locationGeo]);
+
+  useEffect(() => {
     if (batchDetails && batchDetails.status) {
       const statusInputs = batchStatusUpdates.filter(
         (item) =>
@@ -63,6 +117,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
       setStatusInputs(statusInputs);
       createInputData(statusInputs[0].inputs, statusInputs);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
 
   const createInputData = (fields: any, data: any) => {
@@ -87,6 +142,8 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     setInputData({
       ...inputData,
       status: data && data.length && data[0].currentStatus.toUpperCase(),
+      geoLocation: locationGeo,
+      location: address,
     });
   };
 
@@ -188,6 +245,12 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                     input: { color: "#0b0b0b" },
                   }}
                   disabled={item.id === "date" || item.id === "time"}
+                  error={item.id === "location" && addressError}
+                  helperText={
+                    item.id === "location" &&
+                    addressError &&
+                    "Unable to fetch address. Please populate accordingly."
+                  }
                 />
               </FormControl>
             ))}
@@ -205,6 +268,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
 
   const renderRecordedActivity = () => {
     let activities: any = [];
+    const ignoreKeys = ["status", "geoLocation"];
     if (
       recordedActivity &&
       recordedActivity.activities &&
@@ -223,14 +287,23 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
-          {Object.keys(activities).map((item: any) => (
-            <ListItem key={`input-${item}`}>
-              <ListItemText
-                primary={utils.toTitleText(item)}
-                secondary={activities[item]}
-              />
-            </ListItem>
-          ))}
+          {Object.keys(activities).map((item: any) => {
+            if (!ignoreKeys.includes(item)) {
+              return (
+                <ListItem key={`input-${item}`}>
+                  <ListItemText
+                    primary={utils.toTitleText(item)}
+                    secondary={
+                      item === "date"
+                        ? utils.formatDate(activities[item], "L")
+                        : activities[item]
+                    }
+                  />
+                </ListItem>
+              );
+            }
+            return null;
+          })}
         </List>
       );
     }

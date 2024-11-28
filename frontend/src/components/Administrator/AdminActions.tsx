@@ -30,9 +30,11 @@ export const types = {
   GET_TRUST_FAILURE: "GET_TRUST_FAILURE",
   GET_BATCH_QR_REQUEST: "GET_BATCH_QR_REQUEST",
   GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
+  GET_BATCH_ITEMS_QR_SUCCESS: "GET_BATCH_ITEMS_QR_SUCCESS",
   GET_BATCH_QR_FAILURE: "GET_BATCH_QR_FAILURE",
   CLEAR_BATCH_DETAILS: "CLEAR_BATCH_DETAILS",
   CLEAR_ITEM_DETAILS: "GET_BATCH_QR_FAILURE",
+  CLEAR_QR_CODES: "CLEAR_QR_CODES",
 };
 
 // @ts-ignore
@@ -182,7 +184,6 @@ export const getBatchItems: ActionCreator<
         },
       });
 
-      console.log("RESPONSE", response.data);
       dispatch({
         type: types.GET_BATCH_ITEMS_SUCCESS,
         payload: {
@@ -305,31 +306,49 @@ export const getBatchQrCode: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
 > =
-  (id: string, itemId: string) =>
+  (id: string, itemId?: string) =>
   async (
     dispatch: (arg0: {
-      type: string;
+      itemId?: string;
       payload?: { data: any; error: undefined };
+      type: any;
       error?: string;
     }) => void,
   ) => {
     dispatch({
       type: types.GET_BATCH_QR_REQUEST,
+      itemId,
     });
+
+    let url = `${API_ROOT}/batches/${id}/qr-code`;
+    if (itemId) {
+      url = `${API_ROOT}/batches/${id}/items/${itemId}/qr-code`;
+    }
 
     try {
       const response = await axios({
         method: "GET",
-        url: `${API_ROOT}/batches/${id}/qr-code`,
+        url,
       });
 
-      dispatch({
-        type: types.GET_BATCH_QR_SUCCESS,
-        payload: {
-          data: response.data,
-          error: undefined,
-        },
-      });
+      if (itemId) {
+        dispatch({
+          type: types.GET_BATCH_ITEMS_QR_SUCCESS,
+          itemId,
+          payload: {
+            data: response.data,
+            error: undefined,
+          },
+        });
+      } else {
+        dispatch({
+          type: types.GET_BATCH_QR_SUCCESS,
+          payload: {
+            data: response.data,
+            error: undefined,
+          },
+        });
+      }
     } catch (error) {
       console.log("Get Item Detail Error", error);
       dispatch({
@@ -350,6 +369,12 @@ export const clearItemDetails = () => {
   };
 };
 
+export const clearQrCodes = () => {
+  return {
+    type: types.CLEAR_QR_CODES,
+  };
+};
+
 // @ts-ignore
 export const adminActions: ActionCreatorsMapObject<
   // @ts-ignore
@@ -364,4 +389,5 @@ export const adminActions: ActionCreatorsMapObject<
   getBatchQrCode,
   clearBatchDetails,
   clearItemDetails,
+  clearQrCodes,
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 
 // mui
@@ -7,10 +7,10 @@ import Dialog from "@mui/material/Dialog";
 import { Divider, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
+import { useReactToPrint } from "react-to-print";
 
 interface ItemDetailsDialogProps {
   open: boolean;
@@ -22,6 +22,9 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
   handleClose,
 }) => {
   const qrCode = useSelector((state: any) => state.admin.batchQrCode);
+  const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   return (
     <Dialog
@@ -43,22 +46,26 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
       >
         <Grid size={"auto"} sx={{ pl: 3, pb: 2 }}>
           <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
-            Master QR Code
+            {itemQrCodes && itemQrCodes.length
+              ? "Unit QR Codes"
+              : "Master QR Code"}
           </Typography>
         </Grid>
         <Grid size={"auto"}>
           <Stack direction={"row"} spacing={2}>
-            <Button
-              variant={"outlined"}
-              color={"inherit"}
-              startIcon={<ShareRoundedIcon />}
-            >
-              Share
-            </Button>
+            {/*<Button*/}
+            {/*  variant={"outlined"}*/}
+            {/*  color={"inherit"}*/}
+            {/*  startIcon={<ShareRoundedIcon />}*/}
+            {/*>*/}
+            {/*  Share*/}
+            {/*</Button>*/}
+            {/*// @ts-ignore*/}
             <Button
               variant={"contained"}
               color={"primary"}
               startIcon={<PrintRoundedIcon />}
+              onClick={reactToPrintFn}
             >
               Print
             </Button>
@@ -73,13 +80,28 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
           <Divider color={"gray"} />
         </Grid>
       </Grid>
-      <Grid
-        container
-        justifyContent={"center"}
-        spacing={2}
-        sx={{ backgroundColor: "#252525", p: 3 }}
-      >
-        <img src={qrCode} alt="QR Code" />
+      <Grid ref={contentRef}>
+        {itemQrCodes && itemQrCodes.length ? (
+          <Grid
+            container
+            justifyContent={"center"}
+            spacing={2}
+            sx={{ backgroundColor: "#252525", p: 3 }}
+          >
+            {itemQrCodes.map((qr: any, index: number) => (
+              <img key={index} src={qr} alt="QR Code" height={200} />
+            ))}
+          </Grid>
+        ) : (
+          <Grid
+            container
+            justifyContent={"center"}
+            spacing={2}
+            sx={{ backgroundColor: "#252525", p: 3 }}
+          >
+            <img src={qrCode} alt="QR Code" />
+          </Grid>
+        )}
       </Grid>
     </Dialog>
   );

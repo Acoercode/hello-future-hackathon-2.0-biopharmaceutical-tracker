@@ -49,7 +49,7 @@ const BatchDetails: React.FC = () => {
             />
           </Grid>
           <Grid size={12}>
-            <DetailsMapPanel />
+            <DetailsMapPanel details={batchDetails} />
           </Grid>
         </Grid>
       </Grid>

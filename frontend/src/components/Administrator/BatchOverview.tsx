@@ -200,7 +200,7 @@ const BatchOverview: React.FC = () => {
               Create New Batch
             </Button>
           }
-          data={batchList && batchList.items}
+          data={batchList || []}
           columns={columns}
           options={options}
         />

@@ -16,6 +16,8 @@ import StepConnector, {
 } from "@mui/material/StepConnector";
 import { StepIconProps } from "@mui/material/StepIcon";
 import { styled } from "@mui/material/styles";
+import { trackingPanelHelper } from "./helpers/TrackingPanelHelper";
+import utils from "../../utils/utils";
 
 interface QontoConnectorProps {
   level: number;
@@ -101,25 +103,12 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
   details,
   title,
 }) => {
-  const trackingSteps = [
-    {
-      title: "Batch Created",
-      date: "2021-10-10",
-      time: "10:00 AM",
-      description: "Batch was created by user",
-      location: "New York, NY",
-    },
-    {
-      title: "Batch Created",
-      date: "2021-10-10",
-      time: "10:00 AM",
-      description: "Batch was created by user",
-      location: "New York, NY",
-    },
-  ];
-
   const renderTrackingCard = () => {
-    return trackingSteps.map((step, index) => {
+    const orderedActivities = [...(details.activities || [])].sort(
+      // @ts-ignore
+      (a, b) => new Date(b.date) - new Date(a.date),
+    );
+    return orderedActivities.map((step: any, index: number) => {
       return (
         <Grid size={12} key={`tracking-${index}`}>
           <Paper
@@ -134,26 +123,46 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                 connector={<QontoConnector level={index} />}
                 orientation={"vertical"}
               >
-                {trackingSteps.map((label, i) => (
-                  <Step key={`${label.title}-${i}`}>
-                    <StepLabel
-                      StepIconComponent={(e) => QontoStepIcon(e, index)}
-                    >
-                      <Stack>
-                        <Typography
-                          sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                        >
-                          {label.title}
-                        </Typography>
-                        <Typography
-                          sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                        >
-                          {label.date}
-                        </Typography>
-                      </Stack>
-                    </StepLabel>
-                  </Step>
-                ))}
+                <Step>
+                  <StepLabel StepIconComponent={(e) => QontoStepIcon(e, index)}>
+                    <Stack>
+                      <Typography
+                        sx={{
+                          color: index === 0 ? "#0b0b0b" : "#fff",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {trackingPanelHelper(step.status.toLowerCase())}
+                      </Typography>
+                      <Typography
+                        sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
+                      >
+                        {utils.formatDate(step.date)}
+                      </Typography>
+                    </Stack>
+                  </StepLabel>
+                </Step>
+                <Step>
+                  <StepLabel StepIconComponent={(e) => QontoStepIcon(e, index)}>
+                    <Stack>
+                      <Typography
+                        sx={{
+                          color: index === 0 ? "#0b0b0b" : "#fff",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Location
+                      </Typography>
+                      <Typography
+                        sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
+                      >
+                        {step.location ||
+                          step.receiverLocation ||
+                          step.originAddress}
+                      </Typography>
+                    </Stack>
+                  </StepLabel>
+                </Step>
               </Stepper>
             </Stack>
           </Paper>
@@ -196,9 +205,15 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
           </Grid>
         </Grid>
         <Grid size={12}>
-          <Grid container spacing={2}>
-            {renderTrackingCard()}
-          </Grid>
+          {details && details.activities && details.activities.length > 0 ? (
+            <Grid container spacing={2}>
+              {renderTrackingCard()}
+            </Grid>
+          ) : (
+            <Typography variant={"body1"} sx={{ textAlign: "center" }}>
+              No tracking data available
+            </Typography>
+          )}
         </Grid>
       </Grid>
     </Paper>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // components and helpers
 import ComponentWrapper from "../containers/ComponentWrapper";
@@ -10,9 +10,17 @@ import Typography from "@mui/material/Typography";
 import controlIcon from "../assets/images/Control.svg";
 import { useNavigate } from "react-router-dom";
 import BatchDetails from "../components/Administrator/BatchDetails";
+import { adminActions } from "../components/Administrator/AdminActions";
+import { useDispatch } from "react-redux";
 
 const AdminBatchDetailView: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => dispatch(adminActions?.clearBatchDetails());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleBack = () => {
     navigate("/admin");

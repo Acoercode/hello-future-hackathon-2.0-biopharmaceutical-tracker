@@ -155,7 +155,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
               Item Details
             </Typography>
           }
-          data={items && items.items}
+          data={items || []}
           columns={columns}
           options={options}
         />

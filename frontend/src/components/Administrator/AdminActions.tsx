@@ -31,6 +31,8 @@ export const types = {
   GET_BATCH_QR_REQUEST: "GET_BATCH_QR_REQUEST",
   GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
   GET_BATCH_QR_FAILURE: "GET_BATCH_QR_FAILURE",
+  CLEAR_BATCH_DETAILS: "CLEAR_BATCH_DETAILS",
+  CLEAR_ITEM_DETAILS: "GET_BATCH_QR_FAILURE",
 };
 
 // @ts-ignore
@@ -180,6 +182,7 @@ export const getBatchItems: ActionCreator<
         },
       });
 
+      console.log("RESPONSE", response.data);
       dispatch({
         type: types.GET_BATCH_ITEMS_SUCCESS,
         payload: {
@@ -193,46 +196,6 @@ export const getBatchItems: ActionCreator<
         type: types.GET_BATCH_ITEMS_FAILURE,
         error:
           "There was an issue fetching batch items. Please try again later.",
-      });
-    }
-  };
-
-// @ts-ignore
-export const getBatchActivity: ActionCreator<
-  // @ts-ignore
-  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
-> =
-  (id: string) =>
-  async (
-    dispatch: (arg0: {
-      type: string;
-      payload?: { data: any; error: undefined };
-      error?: string;
-    }) => void,
-  ) => {
-    dispatch({
-      type: types.GET_BATCH_ACTIVITY_REQUEST,
-    });
-
-    try {
-      const response = await axios({
-        method: "GET",
-        url: `${API_ROOT}/batches/${id}/activity`,
-      });
-
-      dispatch({
-        type: types.GET_BATCH_ACTIVITY_SUCCESS,
-        payload: {
-          data: response.data,
-          error: undefined,
-        },
-      });
-    } catch (error) {
-      console.log("Get Batch Activity Error", error);
-      dispatch({
-        type: types.GET_BATCH_ACTIVITY_FAILURE,
-        error:
-          "There was an issue fetching batch activity. Please try again later.",
       });
     }
   };
@@ -376,6 +339,16 @@ export const getBatchQrCode: ActionCreator<
       });
     }
   };
+export const clearBatchDetails = () => {
+  return {
+    type: types.CLEAR_BATCH_DETAILS,
+  };
+};
+export const clearItemDetails = () => {
+  return {
+    type: types.CLEAR_ITEM_DETAILS,
+  };
+};
 
 // @ts-ignore
 export const adminActions: ActionCreatorsMapObject<
@@ -386,8 +359,9 @@ export const adminActions: ActionCreatorsMapObject<
   createBatch,
   getBatchDetails,
   getBatchItems,
-  getBatchActivity,
   getItemDetails,
   checkTrustness,
   getBatchQrCode,
+  clearBatchDetails,
+  clearItemDetails,
 };

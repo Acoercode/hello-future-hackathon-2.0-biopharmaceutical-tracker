@@ -64,7 +64,9 @@ const BatchOverviewRiskPanel: React.FC = () => {
           >
             {productList &&
               productList.map((item: any) => (
-                <MenuItem value={item}>{utils.capsToTitleCase(item)}</MenuItem>
+                <MenuItem value={item} key={`risk-${item}`}>
+                  {utils.capsToTitleCase(item)}
+                </MenuItem>
               ))}
           </Select>
         </FormControl>

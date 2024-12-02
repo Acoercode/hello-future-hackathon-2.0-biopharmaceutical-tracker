@@ -138,7 +138,6 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
       };
     }
     case types.GET_BATCH_ITEMS_QR_SUCCESS: {
-      console.log("state", state);
       return {
         ...state,
         itemQrLoading: {
@@ -156,6 +155,26 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         ...state,
         batchQrLoading: false,
         batchQrError: action.error,
+      };
+    }
+    case types.FACET_QUERY_REQUEST: {
+      return {
+        ...state,
+        facetsLoading: true,
+      };
+    }
+    case types.FACET_QUERY_SUCCESS: {
+      return {
+        ...state,
+        facetsLoading: false,
+        facets: action.payload?.data,
+      };
+    }
+    case types.FACET_QUERY_FAILURE: {
+      return {
+        ...state,
+        facetsLoading: false,
+        facetsError: action.error,
       };
     }
     case types.CLEAR_BATCH_DETAILS:

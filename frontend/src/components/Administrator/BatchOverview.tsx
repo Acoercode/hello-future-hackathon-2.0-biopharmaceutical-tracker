@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
 import { IconCount } from "./IconCount";
-import { adminActions } from "./AdminActions";
+import { adminActions, facetQuery } from "./AdminActions";
 import utils from "../../utils/utils";
 import Trustness from "../Actions/Trustness";
 import administeredIcon from "../../assets/images/administeredIcon.svg";
 import manufacturedIcon from "../../assets/images/manufacturedIcon.svg";
+import BatchOverviewRiskPanel from "./BatchOverviewRiskPanel";
+
 // mui
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
@@ -17,29 +19,100 @@ import AddIcon from "@mui/icons-material/Add";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import BatchOverviewRiskPanel from "./BatchOverviewRiskPanel";
+import { PieChart } from "@mui/x-charts/PieChart";
+import { Divider } from "@mui/material";
 
 const BatchOverview: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const batchList = useSelector((state: any) => state.admin.batchList);
+  const facets = useSelector((state: any) => state.admin.facets);
+  const [batchStatusData, setBatchStatusData] = React.useState<any[]>([]);
+  const [batchBrandData, setBatchBrandData] = React.useState<any[]>([]);
+  const [batchTypeData, setBatchTypeData] = React.useState<any[]>([]);
+  const [manufacturedCount, setManufacturedCount] = React.useState<number>(0);
+  const [administeredCount, setAdministeredCount] = React.useState<number>(0);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());
+    dispatch(adminActions?.facetQuery());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const colorPalette = [
+      "#E8C658",
+      "#1E90FF",
+      "#696969",
+      "#FF69B4",
+      "#D64242",
+      "#87CEEB",
+      "#6B58E8",
+      "#FFA500",
+      "#00CED1",
+      "#32CD32",
+      "#006EDB",
+    ];
+    if (facets && facets.length) {
+      if (facets[0].statuses) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].statuses.forEach(
+          (status: { _id: any; count: any }, i: any) => {
+            data.push({
+              id: status._id,
+              label: utils.capsToTitleCase(status._id),
+              color: colorPalette[i],
+              value: status.count,
+            });
+            if (status._id.toLowerCase() === "administered") {
+              setAdministeredCount(status.count);
+            }
+          },
+        );
+        let totalBatches = data.reduce((total, item) => total + item.value, 0);
+        setManufacturedCount(totalBatches);
+        setBatchStatusData(data);
+      }
+      if (facets[0].productTypes) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].productTypes.forEach(
+          (status: { _id: any; count: any }, i: any) => {
+            data.push({
+              id: status._id,
+              label: utils.capsToTitleCase(status._id),
+              color: colorPalette[i],
+              value: status.count,
+            });
+          },
+        );
+        setBatchTypeData(data);
+      }
+      if (facets[0].brands) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].brands.forEach((status: { _id: any; count: any }, i: any) => {
+          data.push({
+            id: status._id,
+            label: utils.capsToTitleCase(status._id),
+            color: colorPalette[i],
+            value: status.count,
+          });
+        });
+        setBatchBrandData(data);
+      }
+    }
+  }, [facets]);
 
   const statusData = [
     {
       title: "Batches Manufactured",
       color: "#0b0b0b",
-      data: 200,
+      data: manufacturedCount,
       image: manufacturedIcon,
     },
     {
       title: "Batches Administered",
       color: "#0b0b0b",
-      data: 100,
+      data: administeredCount,
       image: administeredIcon,
     },
   ];
@@ -185,7 +258,7 @@ const BatchOverview: React.FC = () => {
   };
 
   return (
-    <Grid container justifyContent={"center"} spacing={3}>
+    <Grid container justifyContent={"center"} spacing={3} sx={{ mb: 3 }}>
       <Grid size={8}>
         <Grid container spacing={3}>
           <Grid size={12}>
@@ -222,6 +295,82 @@ const BatchOverview: React.FC = () => {
       <Grid size={4}>
         <Paper sx={{ p: 2, height: "100%" }}>
           <BatchOverviewRiskPanel />
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Status
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                series={[
+                  {
+                    data: batchStatusData,
+                  },
+                ]}
+                margin={{ right: 180 }}
+                height={300}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Product Types
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                series={[
+                  {
+                    data: batchTypeData,
+                  },
+                ]}
+                height={300}
+                margin={{ right: 180 }}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Brands
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                loading={batchBrandData.length === 0}
+                series={[
+                  {
+                    data: batchBrandData,
+                  },
+                ]}
+                height={300}
+                margin={{ right: 180 }}
+              />
+            </Grid>
+          </Grid>
         </Paper>
       </Grid>
     </Grid>

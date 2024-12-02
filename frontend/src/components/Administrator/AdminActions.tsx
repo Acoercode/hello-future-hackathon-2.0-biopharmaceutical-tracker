@@ -32,6 +32,9 @@ export const types = {
   GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
   GET_BATCH_ITEMS_QR_SUCCESS: "GET_BATCH_ITEMS_QR_SUCCESS",
   GET_BATCH_QR_FAILURE: "GET_BATCH_QR_FAILURE",
+  FACET_QUERY_REQUEST: "FACET_QUERY_REQUEST",
+  FACET_QUERY_SUCCESS: "FACET_QUERY_SUCCESS",
+  FACET_QUERY_FAILURE: "FACET_QUERY_FAILURE",
   CLEAR_BATCH_DETAILS: "CLEAR_BATCH_DETAILS",
   CLEAR_ITEM_DETAILS: "GET_BATCH_QR_FAILURE",
   CLEAR_QR_CODES: "CLEAR_QR_CODES",
@@ -358,6 +361,47 @@ export const getBatchQrCode: ActionCreator<
       });
     }
   };
+
+// @ts-ignore
+export const facetQuery: ActionCreator<
+  // @ts-ignore
+  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
+> =
+  () =>
+  async (
+    dispatch: (arg0: {
+      payload?: { data: any; error: undefined };
+      type: any;
+      error?: string;
+    }) => void,
+  ) => {
+    dispatch({
+      type: types.FACET_QUERY_REQUEST,
+    });
+
+    let url = `${API_ROOT}/batches/facets`;
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+      });
+      dispatch({
+        type: types.FACET_QUERY_SUCCESS,
+        payload: {
+          data: response.data,
+          error: undefined,
+        },
+      });
+    } catch (error) {
+      console.log("Get Item Detail Error", error);
+      dispatch({
+        type: types.GET_BATCH_QR_FAILURE,
+        error:
+          "There was an issue fetching item details. Please try again later.",
+      });
+    }
+  };
+
 export const clearBatchDetails = () => {
   return {
     type: types.CLEAR_BATCH_DETAILS,
@@ -390,4 +434,5 @@ export const adminActions: ActionCreatorsMapObject<
   clearBatchDetails,
   clearItemDetails,
   clearQrCodes,
+  facetQuery,
 };

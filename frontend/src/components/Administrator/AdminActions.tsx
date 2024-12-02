@@ -25,8 +25,7 @@ export const types = {
   GET_ITEMS_DETAIL_SUCCESS: "GET_ITEMS_DETAIL_SUCCESS",
   GET_ITEMS_DETAIL_FAILURE: "GET_ITEMS_DETAIL_FAILURE",
   GET_TRUST_REQUEST: "GET_TRUST_REQUEST",
-  GET_TRUST_SUCCESS_ITEMS: "GET_TRUST_SUCCESS_ITEMS",
-  GET_TRUST_SUCCESS_BATCH: "GET_TRUST_SUCCESS_BATCH",
+  GET_TRUST_SUCCESS: "GET_TRUST_SUCCESS",
   GET_TRUST_FAILURE: "GET_TRUST_FAILURE",
   GET_BATCH_QR_REQUEST: "GET_BATCH_QR_REQUEST",
   GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
@@ -111,6 +110,7 @@ export const createBatch: ActionCreator<
           error: undefined,
         },
       });
+      return response.data;
     } catch (error) {
       console.log("Get Batch List Error", error);
       dispatch({
@@ -249,7 +249,7 @@ export const checkTrustness: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
 > =
-  (id: string, itemId: string) =>
+  (id: string, itemId?: string) =>
   async (
     dispatch: (arg0: {
       type: string;
@@ -275,26 +275,14 @@ export const checkTrustness: ActionCreator<
         url,
       });
 
-      if (itemId) {
-        dispatch({
-          type: types.GET_TRUST_SUCCESS_ITEMS,
-          payload: {
-            id,
-            data: response.data,
-            error: undefined,
-          },
-        });
-        return;
-      } else {
-        dispatch({
-          type: types.GET_TRUST_SUCCESS_BATCH,
-          payload: {
-            id,
-            data: response.data,
-            error: undefined,
-          },
-        });
-      }
+      dispatch({
+        type: types.GET_TRUST_SUCCESS,
+        payload: {
+          id: itemId ? itemId : id,
+          data: response.data,
+          error: undefined,
+        },
+      });
     } catch (error) {
       console.log("Get Trust Error", error);
       dispatch({

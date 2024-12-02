@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
 import { IconCount } from "./IconCount";
-import { adminActions, facetQuery } from "./AdminActions";
+import { adminActions } from "./AdminActions";
 import utils from "../../utils/utils";
 import Trustness from "../Actions/Trustness";
 import administeredIcon from "../../assets/images/administeredIcon.svg";
@@ -27,6 +27,10 @@ const BatchOverview: React.FC = () => {
   const dispatch = useDispatch();
   const batchList = useSelector((state: any) => state.admin.batchList);
   const facets = useSelector((state: any) => state.admin.facets);
+  const trustData = useSelector((state: any) => state.admin.trustData);
+  const trustDataLoading = useSelector(
+    (state: any) => state.admin.trustLoading,
+  );
   const [batchStatusData, setBatchStatusData] = React.useState<any[]>([]);
   const [batchBrandData, setBatchBrandData] = React.useState<any[]>([]);
   const [batchTypeData, setBatchTypeData] = React.useState<any[]>([]);
@@ -38,6 +42,16 @@ const BatchOverview: React.FC = () => {
     dispatch(adminActions?.facetQuery());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (batchList && batchList.length > 0) {
+      const ids = batchList.map((item: { _id: any }) => item._id);
+      ids.forEach((id: any) => {
+        dispatch(adminActions?.checkTrustness(id));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchList]);
 
   useEffect(() => {
     const colorPalette = [
@@ -132,7 +146,7 @@ const BatchOverview: React.FC = () => {
       label: "Product ID",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -140,7 +154,7 @@ const BatchOverview: React.FC = () => {
       label: "Status",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value: string) => {
           if (value) {
             return utils.capsToTitleCase(value);
@@ -152,10 +166,10 @@ const BatchOverview: React.FC = () => {
     },
     {
       name: "productType",
-      label: "Product Type",
+      label: "Type",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value: string) => {
           if (value) {
             return utils.capsToTitleCase(value);
@@ -170,31 +184,23 @@ const BatchOverview: React.FC = () => {
       label: "Brand",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
-    // {
-    //   name: "batchNumber",
-    //   label: "Batch Number",
-    //   options: {
-    //     filter: true,
-    //     sort: false,
-    //   },
-    // },
     {
       name: "numberOfItems",
-      label: "Number of Units",
+      label: "# of Units",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "expirationDate",
-      label: "Expiration Date",
+      label: "Exp. Date",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -203,36 +209,17 @@ const BatchOverview: React.FC = () => {
       options: {
         filter: false,
         sort: false,
-        customBodyRender: () => {
+        customBodyRender: (value: any, tableMeta: any) => {
+          const f = tableMeta.rowData[0];
           return (
             <Trustness
               type="file"
-              score={
-                100
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.score
-              }
-              verified={
-                true
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.verified
-              }
+              score={100}
+              verified={trustData && trustData[f] && trustData[f].verified}
               checking={
-                false
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].checkingTrust
-              }
-              onExpertVerification={
-                () => console.log("validate")
-                // window.open(
-                //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
-                //     '_blank'
-                // )
+                trustDataLoading && trustDataLoading[f]
+                  ? trustDataLoading[f]
+                  : false
               }
               disabled={false}
             />
@@ -255,6 +242,10 @@ const BatchOverview: React.FC = () => {
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [5, 10, 15],
+    sortOrder: {
+      name: "productId",
+      direction: "asc",
+    },
   };
 
   return (

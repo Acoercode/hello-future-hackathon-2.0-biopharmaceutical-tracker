@@ -28,6 +28,9 @@ const getHash = async (payload) => {
     // Remove fields that might change
     delete toStamp['_id'];
     delete toStamp['stamp'];
+    delete toStamp['batch'];
+
+    console.log('PAYLOAD', JSON.stringify(toStamp));
 
     const md5sum = crypto.createHash('md5');
     const hash = md5sum.update(JSON.stringify(toStamp)).digest('hex')

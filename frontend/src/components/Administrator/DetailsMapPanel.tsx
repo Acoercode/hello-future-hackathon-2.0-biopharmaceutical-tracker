@@ -75,7 +75,7 @@ const DetailsMapPanel: React.FC<DetailsMapPanelProps> = ({ details }) => {
   return (
     <Paper sx={{ p: 2 }}>
       <MapContainer
-        center={position}
+        center={position && position[0] ? position : [33.749, -84.388]}
         zoom={13}
         scrollWheelZoom={false}
         style={{ width: "100%", height: 425 }}
@@ -87,7 +87,12 @@ const DetailsMapPanel: React.FC<DetailsMapPanelProps> = ({ details }) => {
         {locations &&
           locations.length &&
           locations.map((position: LatLngExpression, idx: number) => (
-            <Marker key={`marker-${idx}`} position={position} icon={customIcon}>
+            <Marker
+              key={`marker-${idx}`}
+              // @ts-ignore
+              position={position && position[0] ? position : [33.749, -84.388]}
+              icon={customIcon}
+            >
               <Popup>
                 <Grid container>
                   <Grid size={12}>

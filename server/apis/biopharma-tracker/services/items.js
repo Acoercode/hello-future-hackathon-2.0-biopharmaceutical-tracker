@@ -84,9 +84,7 @@ const getBatchItem = async (batchId, itemId) => {
             });
 
         if (!item) {
-            return res.status(404).json({
-                error: 'Item not found'
-            });
+            return;
         }
 
         return {

@@ -104,10 +104,19 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
   title,
 }) => {
   const renderTrackingCard = () => {
-    const orderedActivities = [...(details.activities || [])].sort(
-      // @ts-ignore
-      (a, b) => new Date(b.date) - new Date(a.date),
-    );
+    let orderedActivities = [];
+    if (title.includes("Batch")) {
+      orderedActivities = [...(details.activities || [])].sort(
+        // @ts-ignore
+        (a, b) => new Date(b.date) - new Date(a.date),
+      );
+    } else {
+      orderedActivities = [...(details.batch.activities || [])].sort(
+        // @ts-ignore
+        (a, b) => new Date(b.date) - new Date(a.date),
+      );
+    }
+
     return orderedActivities.map((step: any, index: number) => {
       return (
         <Grid size={12} key={`tracking-${index}`}>
@@ -171,6 +180,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
     });
   };
 
+  console.log("details", details);
   return (
     <Paper sx={{ p: 2, height: "100%" }}>
       <Grid container spacing={2}>
@@ -190,7 +200,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                 </Typography>
               ) : (
                 <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
-                  # {details && details.batch.productId} -{" "}
+                  # {details && details.batch && details.batch.productId} -{" "}
                   {details && details.itemNumber}
                 </Typography>
               )}
@@ -204,17 +214,34 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        <Grid size={12}>
-          {details && details.activities && details.activities.length > 0 ? (
-            <Grid container spacing={2}>
-              {renderTrackingCard()}
-            </Grid>
-          ) : (
-            <Typography variant={"body1"} sx={{ textAlign: "center" }}>
-              No tracking data available
-            </Typography>
-          )}
-        </Grid>
+        {title.includes("Batch") ? (
+          <Grid size={12}>
+            {details && details.activities && details.activities.length > 0 ? (
+              <Grid container spacing={2}>
+                {renderTrackingCard()}
+              </Grid>
+            ) : (
+              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
+                No tracking data available
+              </Typography>
+            )}
+          </Grid>
+        ) : (
+          <Grid size={12}>
+            {details &&
+            details.batch &&
+            details.batch.activities &&
+            details.batch.activities.length > 0 ? (
+              <Grid container spacing={2}>
+                {renderTrackingCard()}
+              </Grid>
+            ) : (
+              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
+                No tracking data available
+              </Typography>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Paper>
   );

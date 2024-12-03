@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import MUIDataTable from "mui-datatables";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
 import { adminActions } from "./AdminActions";
@@ -26,12 +26,26 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const trustData = useSelector((state: any) => state.admin.trustData);
+  const trustDataLoading = useSelector(
+    (state: any) => state.admin.trustLoading,
+  );
   const [openQr, setOpenQr] = React.useState(false);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (items && items.length > 0) {
+      const itemIds = items.map((item: { _id: any }) => item._id);
+      itemIds.forEach((itemId: any) => {
+        dispatch(adminActions?.checkTrustness(id, itemId));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
 
   const handleItemQrCodes = () => {
     const itemIds = items.map((item: { _id: any }) => item._id);
@@ -86,36 +100,17 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
       options: {
         filter: false,
         sort: false,
-        customBodyRender: () => {
+        customBodyRender: (value: any, tableMeta: any) => {
+          const f = tableMeta.rowData[0];
           return (
             <Trustness
               type="file"
-              score={
-                100
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.score
-              }
-              verified={
-                true
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.verified
-              }
+              score={100}
+              verified={trustData && trustData[f] && trustData[f].verified}
               checking={
-                false
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].checkingTrust
-              }
-              onExpertVerification={
-                () => console.log("validate")
-                // window.open(
-                //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
-                //     '_blank'
-                // )
+                trustDataLoading && trustDataLoading[f]
+                  ? trustDataLoading[f]
+                  : false
               }
               disabled={false}
             />
@@ -183,5 +178,4 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
     </Grid>
   );
 };
-
 export default BatchItemsList;

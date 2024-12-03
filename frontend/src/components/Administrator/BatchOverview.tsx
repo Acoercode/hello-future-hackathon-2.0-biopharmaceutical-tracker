@@ -10,6 +10,8 @@ import utils from "../../utils/utils";
 import Trustness from "../Actions/Trustness";
 import administeredIcon from "../../assets/images/administeredIcon.svg";
 import manufacturedIcon from "../../assets/images/manufacturedIcon.svg";
+import BatchOverviewRiskPanel from "./BatchOverviewRiskPanel";
+
 // mui
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
@@ -17,29 +19,114 @@ import AddIcon from "@mui/icons-material/Add";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import BatchOverviewRiskPanel from "./BatchOverviewRiskPanel";
+import { PieChart } from "@mui/x-charts/PieChart";
+import { Divider } from "@mui/material";
 
 const BatchOverview: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const batchList = useSelector((state: any) => state.admin.batchList);
+  const facets = useSelector((state: any) => state.admin.facets);
+  const trustData = useSelector((state: any) => state.admin.trustData);
+  const trustDataLoading = useSelector(
+    (state: any) => state.admin.trustLoading,
+  );
+  const [batchStatusData, setBatchStatusData] = React.useState<any[]>([]);
+  const [batchBrandData, setBatchBrandData] = React.useState<any[]>([]);
+  const [batchTypeData, setBatchTypeData] = React.useState<any[]>([]);
+  const [manufacturedCount, setManufacturedCount] = React.useState<number>(0);
+  const [administeredCount, setAdministeredCount] = React.useState<number>(0);
 
   useEffect(() => {
     dispatch(adminActions?.getBatchList());
+    dispatch(adminActions?.facetQuery());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (batchList && batchList.length > 0) {
+      const ids = batchList.map((item: { _id: any }) => item._id);
+      ids.forEach((id: any) => {
+        dispatch(adminActions?.checkTrustness(id));
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [batchList]);
+
+  useEffect(() => {
+    const colorPalette = [
+      "#E8C658",
+      "#1E90FF",
+      "#696969",
+      "#FF69B4",
+      "#D64242",
+      "#87CEEB",
+      "#6B58E8",
+      "#FFA500",
+      "#00CED1",
+      "#32CD32",
+      "#006EDB",
+    ];
+    if (facets && facets.length) {
+      if (facets[0].statuses) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].statuses.forEach(
+          (status: { _id: any; count: any }, i: any) => {
+            data.push({
+              id: status._id,
+              label: utils.capsToTitleCase(status._id),
+              color: colorPalette[i],
+              value: status.count,
+            });
+            if (status._id.toLowerCase() === "administered") {
+              setAdministeredCount(status.count);
+            }
+          },
+        );
+        let totalBatches = data.reduce((total, item) => total + item.value, 0);
+        setManufacturedCount(totalBatches);
+        setBatchStatusData(data);
+      }
+      if (facets[0].productTypes) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].productTypes.forEach(
+          (status: { _id: any; count: any }, i: any) => {
+            data.push({
+              id: status._id,
+              label: utils.capsToTitleCase(status._id),
+              color: colorPalette[i],
+              value: status.count,
+            });
+          },
+        );
+        setBatchTypeData(data);
+      }
+      if (facets[0].brands) {
+        const data: React.SetStateAction<any[]> = [];
+        facets[0].brands.forEach((status: { _id: any; count: any }, i: any) => {
+          data.push({
+            id: status._id,
+            label: utils.capsToTitleCase(status._id),
+            color: colorPalette[i],
+            value: status.count,
+          });
+        });
+        setBatchBrandData(data);
+      }
+    }
+  }, [facets]);
 
   const statusData = [
     {
       title: "Batches Manufactured",
       color: "#0b0b0b",
-      data: 200,
+      data: manufacturedCount,
       image: manufacturedIcon,
     },
     {
       title: "Batches Administered",
       color: "#0b0b0b",
-      data: 100,
+      data: administeredCount,
       image: administeredIcon,
     },
   ];
@@ -59,7 +146,7 @@ const BatchOverview: React.FC = () => {
       label: "Product ID",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -67,7 +154,7 @@ const BatchOverview: React.FC = () => {
       label: "Status",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value: string) => {
           if (value) {
             return utils.capsToTitleCase(value);
@@ -79,10 +166,10 @@ const BatchOverview: React.FC = () => {
     },
     {
       name: "productType",
-      label: "Product Type",
+      label: "Type",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
         customBodyRender: (value: string) => {
           if (value) {
             return utils.capsToTitleCase(value);
@@ -97,31 +184,23 @@ const BatchOverview: React.FC = () => {
       label: "Brand",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
-    // {
-    //   name: "batchNumber",
-    //   label: "Batch Number",
-    //   options: {
-    //     filter: true,
-    //     sort: false,
-    //   },
-    // },
     {
       name: "numberOfItems",
-      label: "Number of Units",
+      label: "# of Units",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
       name: "expirationDate",
-      label: "Expiration Date",
+      label: "Exp. Date",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -130,36 +209,17 @@ const BatchOverview: React.FC = () => {
       options: {
         filter: false,
         sort: false,
-        customBodyRender: () => {
+        customBodyRender: (value: any, tableMeta: any) => {
+          const f = tableMeta.rowData[0];
           return (
             <Trustness
               type="file"
-              score={
-                100
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.score
-              }
-              verified={
-                true
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].trust &&
-                // trustData.files[f.id].trust.verified
-              }
+              score={100}
+              verified={trustData && trustData[f] && trustData[f].verified}
               checking={
-                false
-                // trustData.files &&
-                // trustData.files[f.id] &&
-                // trustData.files[f.id].checkingTrust
-              }
-              onExpertVerification={
-                () => console.log("validate")
-                // window.open(
-                //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
-                //     '_blank'
-                // )
+                trustDataLoading && trustDataLoading[f]
+                  ? trustDataLoading[f]
+                  : false
               }
               disabled={false}
             />
@@ -182,10 +242,14 @@ const BatchOverview: React.FC = () => {
     print: false,
     rowsPerPage: 5,
     rowsPerPageOptions: [5, 10, 15],
+    sortOrder: {
+      name: "productId",
+      direction: "asc",
+    },
   };
 
   return (
-    <Grid container justifyContent={"center"} spacing={3}>
+    <Grid container justifyContent={"center"} spacing={3} sx={{ mb: 3 }}>
       <Grid size={8}>
         <Grid container spacing={3}>
           <Grid size={12}>
@@ -222,6 +286,82 @@ const BatchOverview: React.FC = () => {
       <Grid size={4}>
         <Paper sx={{ p: 2, height: "100%" }}>
           <BatchOverviewRiskPanel />
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Status
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                series={[
+                  {
+                    data: batchStatusData,
+                  },
+                ]}
+                margin={{ right: 180 }}
+                height={300}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Product Types
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                series={[
+                  {
+                    data: batchTypeData,
+                  },
+                ]}
+                height={300}
+                margin={{ right: 180 }}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid size={4}>
+        <Paper sx={{ p: 2, height: "100%" }}>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant={"body1"} sx={{ fontWeight: "bold" }}>
+                Batch Brands
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Divider sx={{ borderColor: "gray" }} variant={"fullWidth"} />
+            </Grid>
+            <Grid size={12}>
+              <PieChart
+                loading={batchBrandData.length === 0}
+                series={[
+                  {
+                    data: batchBrandData,
+                  },
+                ]}
+                height={300}
+                margin={{ right: 180 }}
+              />
+            </Grid>
+          </Grid>
         </Paper>
       </Grid>
     </Grid>

@@ -25,13 +25,15 @@ export const types = {
   GET_ITEMS_DETAIL_SUCCESS: "GET_ITEMS_DETAIL_SUCCESS",
   GET_ITEMS_DETAIL_FAILURE: "GET_ITEMS_DETAIL_FAILURE",
   GET_TRUST_REQUEST: "GET_TRUST_REQUEST",
-  GET_TRUST_SUCCESS_ITEMS: "GET_TRUST_SUCCESS_ITEMS",
-  GET_TRUST_SUCCESS_BATCH: "GET_TRUST_SUCCESS_BATCH",
+  GET_TRUST_SUCCESS: "GET_TRUST_SUCCESS",
   GET_TRUST_FAILURE: "GET_TRUST_FAILURE",
   GET_BATCH_QR_REQUEST: "GET_BATCH_QR_REQUEST",
   GET_BATCH_QR_SUCCESS: "GET_BATCH_QR_SUCCESS",
   GET_BATCH_ITEMS_QR_SUCCESS: "GET_BATCH_ITEMS_QR_SUCCESS",
   GET_BATCH_QR_FAILURE: "GET_BATCH_QR_FAILURE",
+  FACET_QUERY_REQUEST: "FACET_QUERY_REQUEST",
+  FACET_QUERY_SUCCESS: "FACET_QUERY_SUCCESS",
+  FACET_QUERY_FAILURE: "FACET_QUERY_FAILURE",
   CLEAR_BATCH_DETAILS: "CLEAR_BATCH_DETAILS",
   CLEAR_ITEM_DETAILS: "GET_BATCH_QR_FAILURE",
   CLEAR_QR_CODES: "CLEAR_QR_CODES",
@@ -108,6 +110,7 @@ export const createBatch: ActionCreator<
           error: undefined,
         },
       });
+      return response.data;
     } catch (error) {
       console.log("Get Batch List Error", error);
       dispatch({
@@ -246,7 +249,7 @@ export const checkTrustness: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
 > =
-  (id: string, itemId: string) =>
+  (id: string, itemId?: string) =>
   async (
     dispatch: (arg0: {
       type: string;
@@ -272,26 +275,14 @@ export const checkTrustness: ActionCreator<
         url,
       });
 
-      if (itemId) {
-        dispatch({
-          type: types.GET_TRUST_SUCCESS_ITEMS,
-          payload: {
-            id,
-            data: response.data,
-            error: undefined,
-          },
-        });
-        return;
-      } else {
-        dispatch({
-          type: types.GET_TRUST_SUCCESS_BATCH,
-          payload: {
-            id,
-            data: response.data,
-            error: undefined,
-          },
-        });
-      }
+      dispatch({
+        type: types.GET_TRUST_SUCCESS,
+        payload: {
+          id: itemId ? itemId : id,
+          data: response.data,
+          error: undefined,
+        },
+      });
     } catch (error) {
       console.log("Get Trust Error", error);
       dispatch({
@@ -358,6 +349,47 @@ export const getBatchQrCode: ActionCreator<
       });
     }
   };
+
+// @ts-ignore
+export const facetQuery: ActionCreator<
+  // @ts-ignore
+  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
+> =
+  () =>
+  async (
+    dispatch: (arg0: {
+      payload?: { data: any; error: undefined };
+      type: any;
+      error?: string;
+    }) => void,
+  ) => {
+    dispatch({
+      type: types.FACET_QUERY_REQUEST,
+    });
+
+    let url = `${API_ROOT}/batches/facets`;
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+      });
+      dispatch({
+        type: types.FACET_QUERY_SUCCESS,
+        payload: {
+          data: response.data,
+          error: undefined,
+        },
+      });
+    } catch (error) {
+      console.log("Get Item Detail Error", error);
+      dispatch({
+        type: types.GET_BATCH_QR_FAILURE,
+        error:
+          "There was an issue fetching item details. Please try again later.",
+      });
+    }
+  };
+
 export const clearBatchDetails = () => {
   return {
     type: types.CLEAR_BATCH_DETAILS,
@@ -390,4 +422,5 @@ export const adminActions: ActionCreatorsMapObject<
   clearBatchDetails,
   clearItemDetails,
   clearQrCodes,
+  facetQuery,
 };

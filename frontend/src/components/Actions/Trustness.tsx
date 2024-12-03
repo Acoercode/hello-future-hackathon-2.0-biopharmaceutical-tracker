@@ -26,7 +26,6 @@ interface TrustnessProps {
   checking: boolean;
   type: string;
   disabled: boolean;
-  onExpertVerification: () => void;
 }
 
 const Trustness: React.FC<TrustnessProps> = ({
@@ -35,7 +34,6 @@ const Trustness: React.FC<TrustnessProps> = ({
   checking,
   type,
   disabled,
-  onExpertVerification,
 }) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);

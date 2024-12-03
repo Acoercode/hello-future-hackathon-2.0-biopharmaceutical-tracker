@@ -11,25 +11,28 @@ import { TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { adminActions } from "./AdminActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface BatchDetails {
   productId: string;
   productType: string;
   brand: string;
-  batchNumber: string;
   numberOfItems: string;
+  expirationDate: string;
 }
 
 const CreateBatch: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const createBatchLoading = useSelector(
+    (state: any) => state.admin.createBatchLoading,
+  );
   const [batchDetails, setBatchDetails] = React.useState<BatchDetails>({
     productId: "",
     productType: "",
     brand: "",
-    batchNumber: "",
     numberOfItems: "",
+    expirationDate: "",
   });
 
   const handleInputChange = (
@@ -43,13 +46,22 @@ const CreateBatch: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    console.log("submit", batchDetails);
-    dispatch(adminActions?.createBatch(batchDetails));
-    navigate(`/admin/batch/${batchDetails.productId}`);
+    dispatch(adminActions?.createBatch(batchDetails))
+      .then((data: { batchId: string }) => {
+        navigate(`/admin/batch/${data.batchId}`);
+      })
+      .catch((error: any) => {
+        console.error("Error creating batch:", error);
+      });
   };
 
   return (
     <Grid container justifyContent={"center"} spacing={4}>
+      {createBatchLoading && (
+        <div className="loading-overlay">
+          <div className="loader"></div>
+        </div>
+      )}
       <Grid size={12}>
         <Paper sx={{ p: 2 }}>
           <Grid container spacing={2}>

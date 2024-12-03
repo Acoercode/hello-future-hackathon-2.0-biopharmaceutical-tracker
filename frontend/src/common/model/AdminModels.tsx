@@ -1,4 +1,5 @@
 export interface IAdminAction {
+  id?: any;
   itemId?: string;
   status?: any;
   payload?: IAdminPayload;
@@ -7,6 +8,8 @@ export interface IAdminAction {
 }
 
 export interface IAdminState {
+  trustData?: any;
+  trustLoading?: any;
   itemQrLoading?: any;
   itemQrCodes?: any;
   itemsTrustList?: any;

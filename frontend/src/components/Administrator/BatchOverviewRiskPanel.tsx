@@ -6,9 +6,7 @@ import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Divider, useTheme } from "@mui/material";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
+import { Divider } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -18,7 +16,6 @@ import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 import Paper from "@mui/material/Paper";
 import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
 const BatchOverviewRiskPanel: React.FC = () => {
-  const theme = useTheme();
   const batchList = useSelector((state: any) => state.admin.batchList);
   const [product, setProduct] = useState("");
   const [productList, setProductList] = useState<any[]>([]);
@@ -64,7 +61,9 @@ const BatchOverviewRiskPanel: React.FC = () => {
           >
             {productList &&
               productList.map((item: any) => (
-                <MenuItem value={item}>{utils.capsToTitleCase(item)}</MenuItem>
+                <MenuItem value={item} key={`risk-${item}`}>
+                  {utils.capsToTitleCase(item)}
+                </MenuItem>
               ))}
           </Select>
         </FormControl>

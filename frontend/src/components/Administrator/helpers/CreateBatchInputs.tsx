@@ -18,16 +18,16 @@ export const createBatchInputs = () => [
     placeholder: "Enter Brand",
   },
   {
-    name: "Batch #",
-    id: "batchNumber",
-    type: "text",
-    placeholder: "Enter Batch Number",
-  },
-  {
     name: "# of Items in Batch",
     id: "numberOfItems",
     type: "number",
     placeholder: "Enter Number of Items in Batch",
+  },
+  {
+    name: "Manufacturing Location",
+    id: "location",
+    type: "string",
+    placeholder: "Enter Location",
   },
   {
     name: "Expiration Date",

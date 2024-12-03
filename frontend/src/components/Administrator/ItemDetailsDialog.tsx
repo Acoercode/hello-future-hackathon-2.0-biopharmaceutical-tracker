@@ -31,6 +31,10 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
   const dispatch = useDispatch();
   const { id } = useParams();
   const itemDetails = useSelector((state: any) => state.admin.itemDetails);
+  const trustData = useSelector((state: any) => state.admin.trustData);
+  const trustDataLoading = useSelector(
+    (state: any) => state.admin.trustLoading,
+  );
 
   useEffect(() => {
     return () => dispatch(adminActions?.clearItemDetails());
@@ -68,32 +72,14 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
               </Typography>
               <Trustness
                 type="file"
-                score={
-                  100
-                  // trustData.files &&
-                  // trustData.files[f.id] &&
-                  // trustData.files[f.id].trust &&
-                  // trustData.files[f.id].trust.score
-                }
+                score={100}
                 verified={
-                  true
-                  // trustData.files &&
-                  // trustData.files[f.id] &&
-                  // trustData.files[f.id].trust &&
-                  // trustData.files[f.id].trust.verified
+                  trustData && trustData[itemId] && trustData[itemId].verified
                 }
                 checking={
-                  false
-                  // trustData.files &&
-                  // trustData.files[f.id] &&
-                  // trustData.files[f.id].checkingTrust
-                }
-                onExpertVerification={
-                  () => console.log("validate")
-                  // window.open(
-                  //     `https://ledger.hashlog.io/tx/${f.transactionId}`,
-                  //     '_blank'
-                  // )
+                  trustDataLoading && trustDataLoading[itemId]
+                    ? trustDataLoading[itemId]
+                    : false
                 }
                 disabled={false}
               />
@@ -106,20 +92,6 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
         </Grid>
         <Grid size={"auto"}>
           <Stack direction={"row"} spacing={2}>
-            {/*<Button*/}
-            {/*  variant={"outlined"}*/}
-            {/*  color={"inherit"}*/}
-            {/*  startIcon={<ShareRoundedIcon />}*/}
-            {/*>*/}
-            {/*  Share*/}
-            {/*</Button>*/}
-            {/*<Button*/}
-            {/*  variant={"contained"}*/}
-            {/*  color={"primary"}*/}
-            {/*  startIcon={<PrintRoundedIcon />}*/}
-            {/*>*/}
-            {/*  Print*/}
-            {/*</Button>*/}
             <IconButton color={"inherit"} onClick={handleClose}>
               <CloseRoundedIcon />
             </IconButton>

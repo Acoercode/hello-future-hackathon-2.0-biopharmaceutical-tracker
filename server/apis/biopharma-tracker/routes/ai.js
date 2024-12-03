@@ -1,10 +1,8 @@
 const express = require("express");
-const superagent = require("superagent");
 const router = express.Router();
-
 const OpenAI = require("openai");
-const { zodResponseFormat } = require("openai/helpers/zod");
-const { z } = require("zod");
+
+const { getStockLevel } = require("../services/items")
 
 const openaiApiKey =
   process.env.OPENAI_API_KEY ||
@@ -51,15 +49,22 @@ const stockData = [
   { date: "2024-11-21", stockLevel: 620 },
 ];
 
-router.get("/predict", async (req, res, next) => {
+router.get("/predict/:productId", async (req, res, next) => {
   try {
     var safetyStock = req.query?.safetyStock ? req.query?.safetyStock : 50; // Minimum stock level before manufacturing restarts
     var manufacturingDelay = req.query?.manufacturingDelay
       ? req.query?.manufacturingDelay
       : 5; // Days needed to manufacture new stock
 
+    // Get stock data
+    const since = new Date();
+    since.setDate((new Date()).getDate() - 30);
+    console.log('Since', since.toISOString());
+    const { productId } = req.params;
+    const stockLevels = await getStockLevel(since, productId);
+
     var stockDataText = "";
-    stockData.forEach((row) => {
+    stockLevels.history.forEach((row) => {
       stockDataText += `${row.date}: ${row.stockLevel} units available\n`;
     });
     
@@ -73,7 +78,7 @@ router.get("/predict", async (req, res, next) => {
     The stock depletion rate should be base on the last 30 days.
     Then, compute the number of days that we have before hittig the safety stock level.
     Base your prediction on the stock depletion rate, and the current stock which is ${
-      stockData[stockData.length - 1].stockLevel
+      stockLevels.stockLevel
     }.
 
     Return only 3 lines with the name of the field and the value separated by a column character:
@@ -81,6 +86,7 @@ router.get("/predict", async (req, res, next) => {
     * The "reasoning" should contain a string explaining the computation;
     * The "currentStockDepletionRate" should contain the stock depletion rate.
   `;
+  console.log(prompt)
 
     const completion = await openai.beta.chat.completions.parse({
       model: "o1-mini",

@@ -60,6 +60,30 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
     });
   };
 
+  const renderItemValues = () => {
+    const acceptedValues = [
+      "productId",
+      "productType",
+      "brand",
+      "numberOfItems",
+      "expirationDate",
+    ];
+    if (!details) return null;
+    return Object.keys(details).map((key, i) => {
+      if (!acceptedValues.includes(key)) {
+        return null;
+      }
+      return (
+        <Grid size={{ xs: 6, md: 2.3 }} key={`details-${i}`}>
+          <Typography variant={"body2"} sx={{ fontWeight: "bold" }}>
+            {utils.toTitleText(key)}
+          </Typography>
+          <Typography variant={"body1"}>{details[key]}</Typography>
+        </Grid>
+      );
+    });
+  };
+
   return (
     <Paper sx={{ p: 2 }}>
       <Grid container spacing={2}>

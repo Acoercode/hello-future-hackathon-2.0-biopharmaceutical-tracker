@@ -117,6 +117,13 @@ router.post("/:itemId/activity", async (req, res, next) => {
                     await updateBatch(batchId, { stamp: batchStamp });
                     stamped = await getBatchItem(batchId, itemId);
                     console.log('Stamped batch');
+                } else if (batch.status !== 'ADMINISTERING') {
+                    const payload = { status: 'ADMINISTERING' };
+                    const updatedBatch = await addBatchActivity(batch, payload);
+                    const batchStamp = await stampData(updatedBatch, BATCH_COLLECTION, payload.status);
+                    await updateBatch(batchId, { stamp: batchStamp });
+                    stamped = await getBatchItem(batchId, itemId);
+                    console.log('Stamped batch');
                 }
             }
 

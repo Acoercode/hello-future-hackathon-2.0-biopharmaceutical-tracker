@@ -40,7 +40,7 @@ const getHash = async (payload) => {
 
 const validate = async (payload) => {
 
-    if(!!payload.stamp && !!payload.stamp.data) {
+    if(!!payload.stamp && !!payload.stamp.data && !!payload.stamp.hederaTransactionId) {
 
         const expected = JSON.parse(payload.stamp.data).hash;
 
@@ -51,7 +51,8 @@ const validate = async (payload) => {
 
 
         return ({
-            verified: expected === hash
+            verified: expected === hash,
+            txId: payload.stamp.hederaTransactionId
         });
     }
     return ({

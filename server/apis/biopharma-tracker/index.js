@@ -8,6 +8,7 @@ const batchRouter = require("./routes/batches");
 const itemsRouter = require("./routes/items");
 const stampRouter = require("./routes/notifications")
 const aiRouter = require("./routes/ai")
+const predictionRouter = require("./routes/predictions")
 
 const { getStockLevel } = require("./services/items")
 
@@ -25,6 +26,7 @@ app.use('/batches', batchRouter);
 app.use('/batches/:batchId/items', itemsRouter);
 app.use('/stamp', stampRouter);
 app.use('/ai', aiRouter);
+app.use('/predictions', predictionRouter);
 
 app.get('/stockLevel/:productId', async (req, res, next) => {
   const since = new Date();

@@ -3,6 +3,10 @@ const router = express.Router();
 const OpenAI = require("openai");
 
 const { getStockLevel } = require("../services/items")
+const { addPrediction } = require("../services/predictions")
+const { stampData } = require("../services/stamp");
+
+const COLLECTION = 'predictions'
 
 const openaiApiKey =
   process.env.OPENAI_API_KEY ||
@@ -13,41 +17,6 @@ const getDb = require("../db");
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const mongodb = getDb();
-
-const stockData = [
-  { date: "2024-10-20", stockLevel: 1200 },
-  { date: "2024-10-21", stockLevel: 1150 },
-  { date: "2024-10-22", stockLevel: 1120 },
-  { date: "2024-10-23", stockLevel: 1100 },
-  { date: "2024-10-24", stockLevel: 1100 },
-  { date: "2024-10-25", stockLevel: 1090 },
-  { date: "2024-10-26", stockLevel: 1080 },
-  { date: "2024-10-27", stockLevel: 1000 },
-  { date: "2024-10-28", stockLevel: 800 },
-  { date: "2024-10-29", stockLevel: 780 },
-  { date: "2024-10-31", stockLevel: 770 },
-  { date: "2024-11-01", stockLevel: 760 },
-  { date: "2024-11-01", stockLevel: 750 },
-  { date: "2024-11-03", stockLevel: 745 },
-  { date: "2024-11-04", stockLevel: 740 },
-  { date: "2024-11-05", stockLevel: 730 },
-  { date: "2024-11-06", stockLevel: 725 },
-  { date: "2024-11-07", stockLevel: 720 },
-  { date: "2024-11-08", stockLevel: 700 },
-  { date: "2024-11-09", stockLevel: 690 },
-  { date: "2024-11-10", stockLevel: 690 },
-  { date: "2024-11-11", stockLevel: 690 },
-  { date: "2024-11-12", stockLevel: 685 },
-  { date: "2024-11-13", stockLevel: 680 },
-  { date: "2024-11-14", stockLevel: 680 },
-  { date: "2024-11-15", stockLevel: 670 },
-  { date: "2024-11-16", stockLevel: 660 },
-  { date: "2024-11-17", stockLevel: 640 },
-  { date: "2024-11-18", stockLevel: 635 },
-  { date: "2024-11-19", stockLevel: 630 },
-  { date: "2024-11-20", stockLevel: 625 },
-  { date: "2024-11-21", stockLevel: 620 },
-];
 
 router.get("/predict/:productId", async (req, res, next) => {
   try {
@@ -100,6 +69,13 @@ router.get("/predict/:productId", async (req, res, next) => {
         response[values[0].trim()] = values[1].trim();
       }
     }
+
+    const stamp = await stampData(response, COLLECTION, 'PREDICTED');
+
+    response._id = stamp._id;
+    response.stamp = stamp;
+
+    await addPrediction(response);
 
     return res.status(200).json(response);
   } catch (e) {

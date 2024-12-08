@@ -34,6 +34,9 @@ export const types = {
   FACET_QUERY_REQUEST: "FACET_QUERY_REQUEST",
   FACET_QUERY_SUCCESS: "FACET_QUERY_SUCCESS",
   FACET_QUERY_FAILURE: "FACET_QUERY_FAILURE",
+  GET_PREDICTION_REQUEST: "GET_PREDICTION_REQUEST",
+  GET_PREDICTION_SUCCESS: "GET_PREDICTION_SUCCESS",
+  GET_PREDICTION_FAILURE: "GET_PREDICTION_FAILURE",
   CLEAR_BATCH_DETAILS: "CLEAR_BATCH_DETAILS",
   CLEAR_ITEM_DETAILS: "GET_BATCH_QR_FAILURE",
   CLEAR_QR_CODES: "CLEAR_QR_CODES",
@@ -390,6 +393,46 @@ export const facetQuery: ActionCreator<
     }
   };
 
+// @ts-ignore
+export const getPrediction: ActionCreator<
+  // @ts-ignore
+  ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
+> =
+  (id: string) =>
+  async (
+    dispatch: (arg0: {
+      payload?: { data: any; error: undefined };
+      type: any;
+      error?: string;
+    }) => void,
+  ) => {
+    dispatch({
+      type: types.GET_PREDICTION_REQUEST,
+    });
+
+    let url = `${API_ROOT}/ai/predict/${id}`;
+    try {
+      const response = await axios({
+        method: "GET",
+        url,
+      });
+      dispatch({
+        type: types.GET_PREDICTION_SUCCESS,
+        payload: {
+          data: response.data,
+          error: undefined,
+        },
+      });
+    } catch (error) {
+      console.log("Get Item Detail Error", error);
+      dispatch({
+        type: types.GET_PREDICTION_FAILURE,
+        error:
+          "There was an issue fetching item details. Please try again later.",
+      });
+    }
+  };
+
 export const clearBatchDetails = () => {
   return {
     type: types.CLEAR_BATCH_DETAILS,
@@ -423,4 +466,5 @@ export const adminActions: ActionCreatorsMapObject<
   clearItemDetails,
   clearQrCodes,
   facetQuery,
+  getPrediction,
 };

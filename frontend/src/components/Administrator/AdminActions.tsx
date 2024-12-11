@@ -398,7 +398,7 @@ export const getPrediction: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
 > =
-  (id: string) =>
+  (id: string, safetyStock: string, manufacturingDelay: string) =>
   async (
     dispatch: (arg0: {
       payload?: { data: any; error: undefined };
@@ -415,6 +415,10 @@ export const getPrediction: ActionCreator<
       const response = await axios({
         method: "GET",
         url,
+        params: {
+          safetyStock,
+          manufacturingDelay,
+        },
       });
       dispatch({
         type: types.GET_PREDICTION_SUCCESS,

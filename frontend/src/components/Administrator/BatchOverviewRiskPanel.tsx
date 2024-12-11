@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
+import { adminActions, getBatchItems } from "./AdminActions";
 
 // mui
 import Grid from "@mui/material/Grid2";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Divider } from "@mui/material";
+import { Divider, IconButton, TextField } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useDispatch, useSelector } from "react-redux";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 import Paper from "@mui/material/Paper";
-import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
-import { adminActions, getBatchItems } from "./AdminActions";
+import StartIcon from "@mui/icons-material/Start";
 
 const BatchOverviewRiskPanel: React.FC = () => {
   const dispatch = useDispatch();
@@ -28,6 +28,10 @@ const BatchOverviewRiskPanel: React.FC = () => {
   const [productList, setProductList] = useState<any[]>([]);
   const [counts, setCounts] = useState({ administered: 0, other: 0 });
   const [capturedCounts, setCapturedCounts] = useState<string[]>([]);
+  const [safetyStock, setSafetyStock] = useState<number | null>(50);
+  const [manufacturingDelay, setManufacturingDelay] = useState<number | null>(
+    5,
+  );
 
   useEffect(() => {
     if (batchList && batchList.length > 0) {
@@ -53,14 +57,15 @@ const BatchOverviewRiskPanel: React.FC = () => {
 
   useEffect(() => {
     if (product && product !== "Select Product") {
-      dispatch(adminActions?.getPrediction(product));
+      dispatch(
+        adminActions?.getPrediction(product, safetyStock, manufacturingDelay),
+      );
 
       const batchIds = batchList.filter(
         (item: { productId: any }) => item.productId === product,
       );
 
       batchIds.map((item: { _id: any }) => {
-        console.log("item", item);
         dispatch(adminActions?.getBatchItems(item._id, "risk"));
       });
     }
@@ -91,6 +96,30 @@ const BatchOverviewRiskPanel: React.FC = () => {
     setCounts({ administered: 0, other: 0 });
   };
 
+  const handlePredictChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ) => {
+    const { value, name } = event.target;
+    console.log("name", name, "value", value);
+    if (name === "safetyStock") {
+      if (value === "") {
+        return setSafetyStock(null);
+      }
+      setSafetyStock(parseInt(value));
+    } else if (name === "manufacturingDelay") {
+      if (value === "") {
+        return setManufacturingDelay(null);
+      }
+      setManufacturingDelay(parseInt(value));
+    }
+  };
+
+  const handlePredictSubmit = () => {
+    dispatch(
+      adminActions?.getPrediction(product, safetyStock, manufacturingDelay),
+    );
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <Grid container justifyContent={"center"} spacing={2}>
@@ -109,9 +138,6 @@ const BatchOverviewRiskPanel: React.FC = () => {
         </Grid>
         <Grid size={11}>
           <FormControl fullWidth>
-            <Typography variant={"body2"} sx={{ pb: 1 }}>
-              Product ID
-            </Typography>
             <Select
               id="product"
               value={product}
@@ -135,7 +161,7 @@ const BatchOverviewRiskPanel: React.FC = () => {
           <Grid size={11}>
             <Grid container spacing={2}>
               <Grid size={12}>
-                <Stack direction={"row"} spacing={2} sx={{ pt: 2 }}>
+                <Stack direction={"row"} spacing={2}>
                   <Stack>
                     <Typography variant={"body1"} sx={{ pb: 1 }}>
                       Supply
@@ -179,20 +205,72 @@ const BatchOverviewRiskPanel: React.FC = () => {
                     </Typography>
                   </Grid>
                   <Grid size={12}>
-                    <Grid container>
-                      {/*<Grid size={4}>*/}
-                      {/*    <Paper sx={{p: 2, bgcolor: "#252525 !important"}}>*/}
-                      {/*        <Stack justifyContent={"center"} alignItems={"center"}>*/}
-                      {/*            <Typography variant={"body2"}>Demand</Typography>*/}
-                      {/*            <TrendingDownRoundedIcon*/}
-                      {/*                sx={{fontSize: 60}}*/}
-                      {/*                color={"primary"}*/}
-                      {/*            />*/}
-                      {/*        </Stack>*/}
-                      {/*    </Paper>*/}
-                      {/*</Grid>*/}
+                    <Grid
+                      container
+                      spacing={1}
+                      alignItems={"flex-end"}
+                      justifyContent={"space-between"}
+                    >
+                      <Grid size={5}>
+                        <FormControl fullWidth>
+                          <Typography variant={"caption"} color={"primary"}>
+                            Safety Stock
+                          </Typography>
+                          <TextField
+                            id="safety stock"
+                            // label="Safety Stock"
+                            type="number"
+                            name={"safetyStock"}
+                            size={"small"}
+                            value={safetyStock}
+                            onChange={(e) => handlePredictChange(e)}
+                            sx={{
+                              input: {
+                                background: "#252525",
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid size={5}>
+                        <FormControl fullWidth>
+                          <Typography variant={"caption"} color={"primary"}>
+                            Manufacturing Delay
+                          </Typography>
+                          <TextField
+                            id="delay"
+                            // label="MFG Delay"
+                            type="number"
+                            name={"manufacturingDelay"}
+                            size={"small"}
+                            value={manufacturingDelay}
+                            onChange={(e) => handlePredictChange(e)}
+                            sx={{
+                              input: {
+                                background: "#252525",
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid size={"auto"}>
+                        <IconButton
+                          onClick={handlePredictSubmit}
+                          disabled={!safetyStock || !manufacturingDelay}
+                        >
+                          <StartIcon color={"primary"} />
+                        </IconButton>
+                      </Grid>
                       <Grid size={12}>
-                        <Paper sx={{ p: 2, bgcolor: "#252525 !important" }}>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            bgcolor: "#252525 !important",
+                            borderRadius: "4px !important",
+                          }}
+                        >
                           <Stack justifyContent={"center"}>
                             <Typography variant={"caption"}>
                               Current Stock Depletion Rate:{" "}

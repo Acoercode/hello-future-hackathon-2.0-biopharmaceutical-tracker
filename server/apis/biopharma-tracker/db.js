@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = process.env.MONGO_URI || 'mongodb+srv://biopharma-tracker:nYd3B48T7to0oMFY@acoer-serverless.80zt6.mongodb.net/?retryWrites=true&w=majority&appName=ACOER-Serverless';
+const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/biopharma-tracker';
 
 let mongodb;
 

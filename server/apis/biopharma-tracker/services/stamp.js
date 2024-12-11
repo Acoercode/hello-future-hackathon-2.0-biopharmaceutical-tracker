@@ -1,7 +1,7 @@
 const superagent = require('superagent');
 const crypto = require('crypto');
 
-const API_KEY = process.env.HASHLOG_API_KEY || "hbar_mk_vTnMts1ghaU96sULBWtg4y10jdLFuiKCaO5x785YZp9NO5bv"
+const API_KEY = process.env.HASHLOG_API_KEY || "YYY"
 
 const stampData = async (payload, type, action) => {
 

@@ -10,7 +10,7 @@ const COLLECTION = 'predictions'
 
 const openaiApiKey =
   process.env.OPENAI_API_KEY ||
-  "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";
+  "XXX";
 const openai = new OpenAI({ apiKey: openaiApiKey });
 
 const getDb = require("../db");

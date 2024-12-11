@@ -199,6 +199,26 @@ export const adminReducer: Reducer<IAdminState, IAdminAction> = (
         facetsError: action.error,
       };
     }
+    case types.GET_PREDICTION_REQUEST: {
+      return {
+        ...state,
+        predictionLoading: true,
+      };
+    }
+    case types.GET_PREDICTION_SUCCESS: {
+      return {
+        ...state,
+        predictionLoading: false,
+        prediction: action.payload?.data,
+      };
+    }
+    case types.GET_PREDICTION_FAILURE: {
+      return {
+        ...state,
+        predictionLoading: false,
+        predictionError: action.error,
+      };
+    }
     case types.CLEAR_BATCH_DETAILS:
       return {
         ...state,

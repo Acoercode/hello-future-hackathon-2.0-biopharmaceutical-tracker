@@ -26,6 +26,8 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
 
+  console.log(itemQrCodes);
+
   return (
     <Dialog
       onClose={handleClose}

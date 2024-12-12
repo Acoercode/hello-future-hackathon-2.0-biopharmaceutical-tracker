@@ -63,6 +63,9 @@ export const getBatchList: ActionCreator<
       const response = await axios({
         method: "GET",
         url: `${API_ROOT}/batches/list`,
+        params: {
+          limit: 1000,
+        },
       });
 
       dispatch({

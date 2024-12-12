@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
-import { adminActions, getBatchItems } from "./AdminActions";
+import { adminActions } from "./AdminActions";
 
 // mui
 import Grid from "@mui/material/Grid2";
@@ -53,6 +53,7 @@ const BatchOverviewRiskPanel: React.FC = () => {
       updateCounts(batchItems);
       setCapturedCounts([...capturedCounts, batchItems[0].batchId]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchItems]);
 
   useEffect(() => {
@@ -65,10 +66,11 @@ const BatchOverviewRiskPanel: React.FC = () => {
         (item: { productId: any }) => item.productId === product,
       );
 
-      batchIds.map((item: { _id: any }) => {
+      batchIds.forEach((item: { _id: any }) => {
         dispatch(adminActions?.getBatchItems(item._id, "risk"));
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
   const updateCounts = (list: any[]) => {
@@ -167,10 +169,10 @@ const BatchOverviewRiskPanel: React.FC = () => {
                       Supply
                     </Typography>
                     <Typography variant={"caption"} sx={{ pb: 1 }}>
-                      {counts.administered} Units Administered
+                      {counts.administered} Items Administered
                     </Typography>
                     <Typography variant={"caption"} sx={{ pb: 1 }}>
-                      {counts.other} Units Manufactured
+                      {counts.other} Items Manufactured
                     </Typography>
                   </Stack>
                   <Gauge

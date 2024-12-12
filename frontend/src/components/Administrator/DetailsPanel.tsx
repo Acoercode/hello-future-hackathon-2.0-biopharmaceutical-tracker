@@ -60,29 +60,29 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
     });
   };
 
-  const renderItemValues = () => {
-    const acceptedValues = [
-      "productId",
-      "productType",
-      "brand",
-      "numberOfItems",
-      "expirationDate",
-    ];
-    if (!details) return null;
-    return Object.keys(details).map((key, i) => {
-      if (!acceptedValues.includes(key)) {
-        return null;
-      }
-      return (
-        <Grid size={{ xs: 6, md: 2.3 }} key={`details-${i}`}>
-          <Typography variant={"body2"} sx={{ fontWeight: "bold" }}>
-            {utils.toTitleText(key)}
-          </Typography>
-          <Typography variant={"body1"}>{details[key]}</Typography>
-        </Grid>
-      );
-    });
-  };
+  // const renderItemValues = () => {
+  //   const acceptedValues = [
+  //     "productId",
+  //     "productType",
+  //     "brand",
+  //     "numberOfItems",
+  //     "expirationDate",
+  //   ];
+  //   if (!details) return null;
+  //   return Object.keys(details).map((key, i) => {
+  //     if (!acceptedValues.includes(key)) {
+  //       return null;
+  //     }
+  //     return (
+  //       <Grid size={{ xs: 6, md: 2.3 }} key={`details-${i}`}>
+  //         <Typography variant={"body2"} sx={{ fontWeight: "bold" }}>
+  //           {utils.toTitleText(key)}
+  //         </Typography>
+  //         <Typography variant={"body1"}>{details[key]}</Typography>
+  //       </Grid>
+  //     );
+  //   });
+  // };
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -104,6 +104,10 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
                     score={100}
                     verified={
                       trustData && trustData[id] && trustData[id].verified
+                    }
+                    txId={
+                      (trustData && trustData[id] && trustData[id].txId) ||
+                      "---"
                     }
                     checking={
                       trustDataLoading && trustDataLoading[id]

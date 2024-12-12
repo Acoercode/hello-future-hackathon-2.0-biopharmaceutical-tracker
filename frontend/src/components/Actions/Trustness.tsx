@@ -26,12 +26,14 @@ interface TrustnessProps {
   checking: boolean;
   type: string;
   disabled: boolean;
+  txId: string;
 }
 
 const Trustness: React.FC<TrustnessProps> = ({
   score,
   verified,
   checking,
+  txId,
   type,
   disabled,
 }) => {
@@ -44,6 +46,16 @@ const Trustness: React.FC<TrustnessProps> = ({
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleTransactionView = (e: {
+    preventDefault: () => void;
+    stopPropagation(): void;
+  }) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent the click event from bubbling up
+    const transactionUrl = `https://hederaexplorer.io/search-details/transaction/${txId}`;
+    window.open(transactionUrl, "_blank", "noopener,noreferrer");
   };
 
   const open = Boolean(anchorEl);
@@ -153,6 +165,7 @@ const Trustness: React.FC<TrustnessProps> = ({
             }
             alt="Trust Success"
             height={30}
+            onClick={handleTransactionView}
           />
         ) : verified === undefined ? (
           <img

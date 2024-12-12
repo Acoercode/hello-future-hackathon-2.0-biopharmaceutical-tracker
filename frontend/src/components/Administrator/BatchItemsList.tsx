@@ -112,6 +112,7 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
                   ? trustDataLoading[f]
                   : false
               }
+              txId={(trustData && trustData[f] && trustData[f].txId) || "---"}
               disabled={false}
             />
           );

@@ -189,7 +189,7 @@ const BatchOverview: React.FC = () => {
     },
     {
       name: "numberOfItems",
-      label: "# of Units",
+      label: "# of Items",
       options: {
         filter: true,
         sort: true,
@@ -221,6 +221,7 @@ const BatchOverview: React.FC = () => {
                   ? trustDataLoading[f]
                   : false
               }
+              txId={(trustData && trustData[f] && trustData[f].txId) || "---"}
               disabled={false}
             />
           );
@@ -307,7 +308,7 @@ const BatchOverview: React.FC = () => {
                   },
                 ]}
                 margin={{ right: 180 }}
-                height={300}
+                height={500}
               />
             </Grid>
           </Grid>
@@ -331,7 +332,7 @@ const BatchOverview: React.FC = () => {
                     data: batchTypeData,
                   },
                 ]}
-                height={300}
+                height={500}
                 margin={{ right: 180 }}
               />
             </Grid>
@@ -357,7 +358,7 @@ const BatchOverview: React.FC = () => {
                     data: batchBrandData,
                   },
                 ]}
-                height={300}
+                height={500}
                 margin={{ right: 180 }}
               />
             </Grid>

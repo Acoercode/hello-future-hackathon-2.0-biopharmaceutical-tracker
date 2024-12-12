@@ -76,6 +76,10 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
                 verified={
                   trustData && trustData[itemId] && trustData[itemId].verified
                 }
+                txId={
+                  (trustData && trustData[itemId] && trustData[itemId].txId) ||
+                  "---"
+                }
                 checking={
                   trustDataLoading && trustDataLoading[itemId]
                     ? trustDataLoading[itemId]

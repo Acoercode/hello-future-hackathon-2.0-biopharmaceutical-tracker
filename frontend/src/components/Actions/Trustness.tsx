@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
-import { useTheme } from "@mui/material";
+import { Tooltip, useTheme } from "@mui/material";
 
 // Utils
 import trustLoading from "../../assets/images/trustLoading.svg";
@@ -159,14 +159,16 @@ const Trustness: React.FC<TrustnessProps> = ({
             height={30}
           />
         ) : verified ? (
-          <img
-            src={
-              theme.palette.mode === "light" ? trustSuccess : trustSuccessDark
-            }
-            alt="Trust Success"
-            height={30}
-            onClick={handleTransactionView}
-          />
+          <Tooltip title={"Click to View Transaction"} placement={"right"}>
+            <img
+              src={
+                theme.palette.mode === "light" ? trustSuccess : trustSuccessDark
+              }
+              alt="Trust Success"
+              height={30}
+              onClick={handleTransactionView}
+            />
+          </Tooltip>
         ) : verified === undefined ? (
           <img
             src={

@@ -102,7 +102,6 @@ const BatchOverviewRiskPanel: React.FC = () => {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
     const { value, name } = event.target;
-    console.log("name", name, "value", value);
     if (name === "safetyStock") {
       if (value === "") {
         return setSafetyStock(null);

@@ -105,17 +105,10 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
 }) => {
   const renderTrackingCard = () => {
     let orderedActivities = [];
-    if (title.includes("Batch")) {
-      orderedActivities = [...(details.activities || [])].sort(
-        // @ts-ignore
-        (a, b) => new Date(b.date) - new Date(a.date),
-      );
-    } else {
-      orderedActivities = [...(details.batch.activities || [])].sort(
-        // @ts-ignore
-        (a, b) => new Date(b.date) - new Date(a.date),
-      );
-    }
+    orderedActivities = [...(details.activities || [])].sort(
+      // @ts-ignore
+      (a, b) => new Date(b.date) - new Date(a.date),
+    );
 
     return orderedActivities.map((step: any, index: number) => {
       return (
@@ -141,7 +134,10 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                           fontWeight: "bold",
                         }}
                       >
-                        {trackingPanelHelper(step.status.toLowerCase())}
+                        {title.includes("Item") &&
+                        step.status === "ADMINISTERED"
+                          ? "Administered"
+                          : trackingPanelHelper(step.status.toLowerCase())}
                       </Typography>
                       <Typography
                         sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
@@ -213,34 +209,17 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        {title.includes("Batch") ? (
-          <Grid size={12}>
-            {details && details.activities && details.activities.length > 0 ? (
-              <Grid container spacing={2}>
-                {renderTrackingCard()}
-              </Grid>
-            ) : (
-              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
-                No tracking data available
-              </Typography>
-            )}
-          </Grid>
-        ) : (
-          <Grid size={12}>
-            {details &&
-            details.batch &&
-            details.batch.activities &&
-            details.batch.activities.length > 0 ? (
-              <Grid container spacing={2}>
-                {renderTrackingCard()}
-              </Grid>
-            ) : (
-              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
-                No tracking data available
-              </Typography>
-            )}
-          </Grid>
-        )}
+        <Grid size={12}>
+          {details && details.activities && details.activities.length > 0 ? (
+            <Grid container spacing={2}>
+              {renderTrackingCard()}
+            </Grid>
+          ) : (
+            <Typography variant={"body1"} sx={{ textAlign: "center" }}>
+              No tracking data available
+            </Typography>
+          )}
+        </Grid>
       </Grid>
     </Paper>
   );

@@ -13,7 +13,9 @@ export const trackingPanelHelper = (status: string) => {
     case "received":
       return "Received Date";
     case "administered":
-      return "Administration Date";
+      return "Batch Administration Completion Date";
+    case "administering":
+      return "Batch Administration Start Date";
     default:
       return "Unprocessed Date";
   }

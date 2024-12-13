@@ -39,8 +39,6 @@ export const recordActivity: ActionCreator<
       url = `${API_ROOT}/batches/${batchId}/activity`;
     }
 
-    console.log("URL", url);
-
     try {
       const response = await axios({
         method: "POST",

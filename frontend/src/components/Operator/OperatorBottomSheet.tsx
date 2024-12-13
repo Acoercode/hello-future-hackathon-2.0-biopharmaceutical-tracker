@@ -140,8 +140,6 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemDetails]);
 
-  console.log(itemDetails);
-
   const createInputData = (fields: any, data: any) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];

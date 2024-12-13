@@ -107,8 +107,14 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     }
   }, [locationGeo]);
 
+  console.log(batchDetails);
+
   useEffect(() => {
-    if (batchDetails && batchDetails.status) {
+    if (
+      batchDetails &&
+      batchDetails.status &&
+      batchDetails.status !== "RECEIVED"
+    ) {
       const statusInputs = batchStatusUpdates.filter(
         (item) =>
           item.previousStatus.toLowerCase() ===
@@ -116,6 +122,10 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
       );
       setStatusInputs(statusInputs);
       createInputData(statusInputs[0].inputs, statusInputs);
+    } else if (batchDetails && batchDetails.status === "RECEIVED") {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
@@ -369,12 +379,24 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
               {data &&
                 batchDetails &&
                 batchDetails.status &&
+                batchDetails.status !== "RECEIVED" &&
                 !recordedActivity && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     {renderHeader}
                     {renderUpdates()}
                   </Stack>
                 )}
+              {data && batchDetails && batchDetails.status === "RECEIVED" && (
+                <Stack sx={{ p: 2 }} spacing={2}>
+                  <Typography variant={"h6"}>Batch Received</Typography>
+                  <Typography>
+                    The batch has been received and is awaiting administration.
+                  </Typography>
+                  <Typography>
+                    Please scan an item in the batch to update its status.
+                  </Typography>
+                </Stack>
+              )}
             </Sheet.Scroller>
           </Sheet.Content>
         </Sheet.Container>

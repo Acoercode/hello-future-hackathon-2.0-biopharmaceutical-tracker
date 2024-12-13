@@ -15,18 +15,20 @@ import { useReactToPrint } from "react-to-print";
 interface ItemDetailsDialogProps {
   open: boolean;
   handleClose: () => void;
+  details: any;
+  type: string;
 }
 
 const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
   open,
   handleClose,
+  details,
+  type,
 }) => {
   const qrCode = useSelector((state: any) => state.admin.batchQrCode);
   const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
-
-  console.log(itemQrCodes);
 
   return (
     <Dialog
@@ -48,20 +50,11 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
       >
         <Grid size={"auto"} sx={{ pl: 3, pb: 2 }}>
           <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
-            {itemQrCodes && itemQrCodes.length
-              ? "Unit QR Codes"
-              : "Master QR Code"}
+            {type === "item" ? "Item QR Codes" : "Master QR Code"}
           </Typography>
         </Grid>
         <Grid size={"auto"}>
           <Stack direction={"row"} spacing={2}>
-            {/*<Button*/}
-            {/*  variant={"outlined"}*/}
-            {/*  color={"inherit"}*/}
-            {/*  startIcon={<ShareRoundedIcon />}*/}
-            {/*>*/}
-            {/*  Share*/}
-            {/*</Button>*/}
             {/*// @ts-ignore*/}
             <Button
               variant={"contained"}
@@ -83,16 +76,42 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
         </Grid>
       </Grid>
       <Grid ref={contentRef}>
-        {itemQrCodes && itemQrCodes.length ? (
+        {type === "item" && itemQrCodes && Object.keys(itemQrCodes).length ? (
           <Grid
             container
             justifyContent={"center"}
             spacing={2}
             sx={{ backgroundColor: "#252525", p: 3 }}
           >
-            {itemQrCodes.map((qr: any, index: number) => (
-              <img key={index} src={qr} alt="QR Code" height={200} />
-            ))}
+            <Grid size={11}>
+              <Stack>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  ID: {details && details.productId}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Type: {details && details.productType}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Brand: {details && details.brand}
+                </Typography>
+              </Stack>
+            </Grid>
+            {Object.keys(itemQrCodes)
+              .sort(
+                (a, b) => itemQrCodes[a].itemNumber - itemQrCodes[b].itemNumber,
+              )
+              .map((key: any) => (
+                <Stack key={key}>
+                  <img
+                    src={itemQrCodes[key].qrCode}
+                    alt="QR Code"
+                    height={200}
+                  />
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    # {itemQrCodes[key].itemNumber}
+                  </Typography>
+                </Stack>
+              ))}
           </Grid>
         ) : (
           <Grid
@@ -101,7 +120,18 @@ const QrCodeDialog: React.FC<ItemDetailsDialogProps> = ({
             spacing={2}
             sx={{ backgroundColor: "#252525", p: 3 }}
           >
-            <img src={qrCode} alt="QR Code" />
+            <Stack>
+              <img src={qrCode} alt="QR Code" />
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                ID: {details && details.productId}
+              </Typography>
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                Type: {details && details.productType}
+              </Typography>
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                Brand: {details && details.brand}
+              </Typography>
+            </Stack>
           </Grid>
         )}
       </Grid>

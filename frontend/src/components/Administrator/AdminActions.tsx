@@ -303,18 +303,19 @@ export const getBatchQrCode: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IAdminState, null, IAdminAction>
 > =
-  (id: string, itemId?: string) =>
+  (id: string, itemId?: string, itemNumber?: string) =>
   async (
     dispatch: (arg0: {
-      itemId?: string;
+      itemId: string | undefined;
+      itemNumber: string | undefined;
       payload?: { data: any; error: undefined };
-      type: any;
-      error?: string;
+      type: string;
     }) => void,
   ) => {
     dispatch({
       type: types.GET_BATCH_QR_REQUEST,
       itemId,
+      itemNumber,
     });
 
     let url = `${API_ROOT}/batches/${id}/qr-code`;
@@ -332,6 +333,7 @@ export const getBatchQrCode: ActionCreator<
         dispatch({
           type: types.GET_BATCH_ITEMS_QR_SUCCESS,
           itemId,
+          itemNumber,
           payload: {
             data: response.data,
             error: undefined,
@@ -344,12 +346,17 @@ export const getBatchQrCode: ActionCreator<
             data: response.data,
             error: undefined,
           },
+          itemId: undefined,
+          itemNumber: undefined,
         });
       }
     } catch (error) {
       console.log("Get Item Detail Error", error);
       dispatch({
         type: types.GET_BATCH_QR_FAILURE,
+        itemId: undefined,
+        itemNumber: undefined,
+        // @ts-ignore
         error:
           "There was an issue fetching item details. Please try again later.",
       });

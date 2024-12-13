@@ -256,7 +256,7 @@ In summary, BioPharma Tracker should win because it not only showcases technical
 - Ashley MacWhirter - Frontend Developer - https://github.com/amacwhirter
 - Ben Chevallereau - Backend Developer - https://github.com/bchevallereau
 - Lindsay Lee - Project Manager
-- Sam DiCesare - UI/UX Designer - 
+- Sam DiCesare - UI/UX Designer
 
 ## License
 

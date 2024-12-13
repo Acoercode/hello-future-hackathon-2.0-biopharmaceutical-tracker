@@ -22,7 +22,10 @@ router.post("/", async (req, res, next) => {
     const stamp = await stampData(batch, COLLECTION, 'MANUFACTURED');
 
     batch._id = stamp._id;
-    batch.stamp = stamp;
+    batch.stamp = {
+        ...stamp,
+        stampedData: JSON.stringify(batch)
+    }
 
     await addBatch(batch);
 
@@ -39,7 +42,12 @@ router.post("/:batchId/activity", async (req, res, next) => {
         const payload = req.body;
         const updatedBatch = await addBatchActivity(batch, payload);
         const stamp = await stampData(updatedBatch, COLLECTION, payload.status);
-        const stamped = await updateBatch(batchId, { stamp });
+        const stamped = await updateBatch(batchId, {
+            stamp: {
+                ...stamp,
+                stampedData: JSON.stringify(updatedBatch)
+            }
+        });
         console.log('Stamped batch', stamped);
         return res.status(200).json(stamped);
     } else {

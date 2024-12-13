@@ -25,7 +25,10 @@ const createItems = async (batchId, numItems) => {
                 const stamp = await stampData(batchItem, COLLECTION, 'MANUFACTURED');
 
                 batchItem._id = stamp._id;
-                batchItem.stamp = stamp;
+                batchItem.stamp = {
+                    ...stamp,
+                    stampedData: JSON.stringify(batchItem)
+                };
                 await mongodb
                     .db("biopharma-tracker")
                     .collection(COLLECTION)

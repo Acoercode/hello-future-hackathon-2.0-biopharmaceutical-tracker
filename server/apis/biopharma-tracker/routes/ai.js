@@ -72,7 +72,10 @@ router.get("/predict/:productId", async (req, res, next) => {
     const stamp = await stampData(response, COLLECTION, 'PREDICTED');
 
     response._id = stamp._id;
-    response.stamp = stamp;
+    response.stamp = {
+      ...stamp,
+      stampedData: JSON.stringify(response)
+    }
 
     await addPrediction(response);
 

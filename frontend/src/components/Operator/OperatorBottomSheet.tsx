@@ -107,8 +107,6 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     }
   }, [locationGeo]);
 
-  console.log(batchDetails);
-
   useEffect(() => {
     if (
       batchDetails &&

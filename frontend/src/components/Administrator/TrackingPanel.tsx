@@ -180,7 +180,6 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
     });
   };
 
-  console.log("details", details);
   return (
     <Paper sx={{ p: 2, height: "100%" }}>
       <Grid container spacing={2}>

@@ -48,8 +48,6 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId]);
 
-  console.log("itemDetails", itemQrCodes);
-
   return (
     <Dialog
       onClose={handleClose}

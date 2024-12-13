@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 // components and helpers
 import { adminActions } from "./AdminActions";
 import TrackingPanel from "./TrackingPanel";
-import DetailsPanel from "./DetailsPanel";
 import DetailsMapPanel from "./DetailsMapPanel";
 import Trustness from "../Actions/Trustness";
 

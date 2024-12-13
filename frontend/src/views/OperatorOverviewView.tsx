@@ -17,11 +17,18 @@ import { operatorActions } from "../components/Operator/OperatorActions";
 const OperatorOverviewView: React.FC = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState<any>(null);
+  const [type, setType] = useState<string>("");
 
   useEffect(() => {
-    if (data && data.id) {
+    if (data && data.id && data.itemNumber) {
+      const batchId = data.batchId;
+      const itemId = data.id;
+      dispatch(adminActions?.getItemDetails(batchId, itemId));
+      setType("item");
+    } else if (data && data.id) {
       const id = data.id;
       dispatch(adminActions?.getBatchDetails(id));
+      setType("batch");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -32,7 +39,18 @@ const OperatorOverviewView: React.FC = () => {
   };
 
   const handleSubmit = (activityData: any) => {
-    dispatch(operatorActions?.recordActivity(data.id, activityData));
+    if (type === "batch") {
+      dispatch(operatorActions?.recordActivity("batch", data.id, activityData));
+    } else {
+      dispatch(
+        operatorActions?.recordActivity(
+          "item",
+          data.batchId,
+          activityData,
+          data.id,
+        ),
+      );
+    }
   };
 
   return (
@@ -50,7 +68,11 @@ const OperatorOverviewView: React.FC = () => {
         </Stack>
       )}
       <Grid size={12}>
-        <OperatorBottomSheet data={data} handleSubmit={handleSubmit} />
+        <OperatorBottomSheet
+          data={data}
+          handleSubmit={handleSubmit}
+          type={type}
+        />
       </Grid>
     </Grid>
   );

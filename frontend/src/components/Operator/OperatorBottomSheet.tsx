@@ -17,18 +17,22 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import utils from "../../utils/utils";
+import { unitStatusUpdates } from "./helpers/unitStatusUpdates";
 
 interface OperatorBottomSheetProps {
   data: any;
   handleSubmit: any;
+  type: string;
 }
 
 const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   data,
   handleSubmit,
+  type,
 }) => {
   const ref = useRef<SheetRef>();
   const batchDetails = useSelector((state: any) => state.admin.batchDetails);
+  const itemDetails = useSelector((state: any) => state.admin.itemDetails);
   const recordedActivity = useSelector(
     (state: any) => state.operator.recordedActivity,
   );
@@ -128,6 +132,16 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
 
+  useEffect(() => {
+    if (itemDetails) {
+      setStatusInputs(unitStatusUpdates);
+      createInputData(unitStatusUpdates[0].inputs, unitStatusUpdates);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemDetails]);
+
+  console.log(itemDetails);
+
   const createInputData = (fields: any, data: any) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
@@ -173,27 +187,53 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     >
       <Grid size={"auto"}>
         <Typography variant={"h6"}>Current Status</Typography>
-        <Typography variant={"body1"}>
-          #
-          {recordedActivity
-            ? recordedActivity.productId
-            : data && data.productId}
-        </Typography>
-        {/*<Typography variant={"body1"}>{utils.capsToTitleCase(data.brand)}</Typography>*/}
-        {/*<Typography variant={"body1"}>{utils.capsToTitleCase(data.productType)}</Typography>*/}
+        {data && data.productType && data.brand && (
+          <Typography variant={"body1"}>
+            {utils.capsToTitleCase(data.productType)} -{" "}
+            {utils.capsToTitleCase(data.brand)}
+          </Typography>
+        )}
+        {type === "batch" && (
+          <Typography variant={"body1"}>
+            #
+            {recordedActivity
+              ? recordedActivity.productId
+              : data && `${data.productId}`}
+          </Typography>
+        )}
+        {type === "item" && (
+          <Typography variant={"body1"}>
+            #
+            {recordedActivity
+              ? recordedActivity.batch &&
+                `${recordedActivity.batch.productId}-${recordedActivity.itemNumber}`
+              : itemDetails &&
+                itemDetails.batch &&
+                `${itemDetails.batch.productId}-${itemDetails.itemNumber}`}
+          </Typography>
+        )}
       </Grid>
       <Grid size={"auto"}>
-        <Chip
-          label={
-            recordedActivity
-              ? recordedActivity.status
-              : batchDetails && batchDetails.status
-                ? batchDetails.status
-                : "---"
-          }
-          color={"primary"}
-          sx={{ fontWeight: "bold" }}
-        />
+        {type === "batch" && (
+          <Chip
+            label={
+              recordedActivity
+                ? recordedActivity.status
+                : batchDetails && batchDetails.status
+                  ? batchDetails.status
+                  : "---"
+            }
+            color={"primary"}
+            sx={{ fontWeight: "bold" }}
+          />
+        )}
+        {type === "item" && (
+          <Chip
+            label={recordedActivity ? recordedActivity.status : "RECEIVED"}
+            color={"primary"}
+            sx={{ fontWeight: "bold" }}
+          />
+        )}
       </Grid>
       <Grid size={12}>
         <Divider color={"gray"} />
@@ -354,7 +394,8 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
               )}
               {data &&
                 (!batchDetails || !batchDetails.status) &&
-                !recordedActivity && (
+                !recordedActivity &&
+                !itemDetails && (
                   <svg
                     className="checkmark"
                     xmlns="http://www.w3.org/2000/svg"
@@ -375,10 +416,11 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   </svg>
                 )}
               {data &&
-                batchDetails &&
-                batchDetails.status &&
-                batchDetails.status !== "RECEIVED" &&
-                !recordedActivity && (
+                ((itemDetails && itemDetails.status && !recordedActivity) ||
+                  (batchDetails &&
+                    batchDetails.status &&
+                    batchDetails.status !== "RECEIVED" &&
+                    !recordedActivity)) && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     {renderHeader}
                     {renderUpdates()}

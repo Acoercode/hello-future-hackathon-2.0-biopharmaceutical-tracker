@@ -142,7 +142,12 @@ const DetailsPanel: React.FC<BatchDetailsPanelProps> = ({ details, title }) => {
           </Grid>
         </Grid>
       </Grid>
-      <QrCodeDialog open={openQr} handleClose={() => setOpenQr(false)} />
+      <QrCodeDialog
+        open={openQr}
+        handleClose={() => setOpenQr(false)}
+        details={details}
+        type={"batch"}
+      />
     </Paper>
   );
 };

@@ -1,6 +1,7 @@
 export interface IAdminAction {
   id?: any;
   itemId?: string;
+  itemNumber?: string;
   status?: any;
   payload?: IAdminPayload;
   error?: string;

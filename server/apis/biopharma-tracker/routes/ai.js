@@ -55,7 +55,6 @@ router.get("/predict/:productId", async (req, res, next) => {
     * The "reasoning" should contain a string explaining the computation;
     * The "currentStockDepletionRate" should contain the stock depletion rate.
   `;
-  console.log(prompt)
 
     const completion = await openai.beta.chat.completions.parse({
       model: "o1-mini",

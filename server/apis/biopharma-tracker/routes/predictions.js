@@ -20,7 +20,4 @@ router.get("/:predictionId/trust", async (req, res, next) => {
     });
 });
 
-
-
-
 module.exports = router;

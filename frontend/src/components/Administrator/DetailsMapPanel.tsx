@@ -13,6 +13,7 @@ import locationIcon from "../../assets/images/location-sign.svg";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
+import utils from "../../utils/utils";
 
 interface DetailsMapPanelProps {
   details?: any;
@@ -97,7 +98,8 @@ const DetailsMapPanel: React.FC<DetailsMapPanelProps> = ({ details }) => {
                 <Grid container>
                   <Grid size={12}>
                     <Typography variant="h6">
-                      {currentActivity && currentActivity.status}
+                      {currentActivity &&
+                        utils.capsToTitleCase(currentActivity.status)}
                     </Typography>
                   </Grid>
                   <Grid size={12}>

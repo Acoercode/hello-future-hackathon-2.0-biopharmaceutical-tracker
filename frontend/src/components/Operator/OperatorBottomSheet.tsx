@@ -114,6 +114,14 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   useEffect(() => {
     if (
       batchDetails &&
+      (batchDetails.status === "RECEIVED" ||
+        batchDetails.status === "ADMINISTERED")
+    ) {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      batchDetails &&
       batchDetails.status &&
       batchDetails.status !== "RECEIVED"
     ) {
@@ -124,16 +132,30 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
       );
       setStatusInputs(statusInputs);
       createInputData(statusInputs[0].inputs, statusInputs);
-    } else if (batchDetails && batchDetails.status === "RECEIVED") {
-      setStatusInputs([]);
-      setInputData({});
-      snapTo(2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
 
   useEffect(() => {
-    if (itemDetails) {
+    if (itemDetails && itemDetails.status === "ADMINISTERED") {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      itemDetails &&
+      itemDetails.batch &&
+      itemDetails.batch.status &&
+      itemDetails.batch.status !== "ADMINISTERING" &&
+      itemDetails.batch.status !== "RECEIVED"
+    ) {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      itemDetails &&
+      itemDetails.status &&
+      itemDetails.status !== "ADMINISTERED"
+    ) {
       setStatusInputs(unitStatusUpdates);
       createInputData(unitStatusUpdates[0].inputs, unitStatusUpdates);
     }
@@ -390,6 +412,71 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   {renderRecordedActivity()}
                 </Stack>
               )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
+                batchDetails.status === "RECEIVED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Batch Received</Typography>
+                    <Typography>
+                      The batch has been received and is awaiting
+                      administration.
+                    </Typography>
+                    <Typography>
+                      Please scan an item in the batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
+                batchDetails.status === "ADMINISTERED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Batch Administered</Typography>
+                    <Typography>
+                      The batch has completed item administration.
+                    </Typography>
+                    <Typography>
+                      Please scan a different batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "item" &&
+                data &&
+                itemDetails &&
+                itemDetails.status === "ADMINISTERED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Item Administered</Typography>
+                    <Typography>
+                      This item has already been administered.
+                    </Typography>
+                    <Typography>
+                      Please scan another item in the batch to update its
+                      status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "item" &&
+                data &&
+                itemDetails &&
+                itemDetails.status !== "ADMINISTERED" &&
+                itemDetails.batch &&
+                itemDetails.batch.status &&
+                itemDetails.batch.status !== "ADMINISTERING" &&
+                itemDetails.batch.status !== "RECEIVED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>
+                      Item Not Administering
+                    </Typography>
+                    <Typography>
+                      This item is not available for administration.
+                    </Typography>
+                    <Typography>
+                      Please scan another item in the batch to update its
+                      status.
+                    </Typography>
+                  </Stack>
+                )}
               {data &&
                 (!batchDetails || !batchDetails.status) &&
                 !recordedActivity &&
@@ -414,27 +501,25 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   </svg>
                 )}
               {data &&
-                ((itemDetails && itemDetails.status && !recordedActivity) ||
-                  (batchDetails &&
+                ((type === "item" &&
+                  itemDetails &&
+                  itemDetails.status &&
+                  itemDetails.status !== "ADMINISTERED" &&
+                  itemDetails.batch &&
+                  (itemDetails.batch.status === "ADMINISTERING" ||
+                    itemDetails.batch.status === "RECEIVED") &&
+                  !recordedActivity) ||
+                  (type === "batch" &&
+                    batchDetails &&
                     batchDetails.status &&
                     batchDetails.status !== "RECEIVED" &&
+                    batchDetails.status !== "ADMINISTERED" &&
                     !recordedActivity)) && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     {renderHeader}
                     {renderUpdates()}
                   </Stack>
                 )}
-              {data && batchDetails && batchDetails.status === "RECEIVED" && (
-                <Stack sx={{ p: 2 }} spacing={2}>
-                  <Typography variant={"h6"}>Batch Received</Typography>
-                  <Typography>
-                    The batch has been received and is awaiting administration.
-                  </Typography>
-                  <Typography>
-                    Please scan an item in the batch to update its status.
-                  </Typography>
-                </Stack>
-              )}
             </Sheet.Scroller>
           </Sheet.Content>
         </Sheet.Container>

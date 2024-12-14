@@ -115,6 +115,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     if (
       batchDetails &&
       (batchDetails.status === "RECEIVED" ||
+        batchDetails.status === "ADMINISTERING" ||
         batchDetails.status === "ADMINISTERED")
     ) {
       setStatusInputs([]);
@@ -430,6 +431,22 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
               {type === "batch" &&
                 data &&
                 batchDetails &&
+                batchDetails.status === "ADMINISTERING" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>
+                      Batch Administration in Process
+                    </Typography>
+                    <Typography>
+                      This batch is in the process of administration.
+                    </Typography>
+                    <Typography>
+                      Please scan an item in the batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
                 batchDetails.status === "ADMINISTERED" && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     <Typography variant={"h6"}>Batch Administered</Typography>
@@ -514,6 +531,7 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                     batchDetails.status &&
                     batchDetails.status !== "RECEIVED" &&
                     batchDetails.status !== "ADMINISTERED" &&
+                    batchDetails.status !== "ADMINISTERING" &&
                     !recordedActivity)) && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     {renderHeader}

@@ -3,18 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 
 // components and helpers
 import { adminActions } from "./AdminActions";
+import startIcon from "../../assets/images/start_icon.svg";
+import calendarIcon from "../../assets/images/calendar_icon.svg";
+import rateIcon from "../../assets/images/rate_icon.svg";
+import summaryIcon from "../../assets/images/summary_icon.svg";
 
 // mui
 import Grid from "@mui/material/Grid2";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Divider, IconButton, TextField } from "@mui/material";
+import { Divider, IconButton, TextField, Tooltip } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 import Paper from "@mui/material/Paper";
 import StartIcon from "@mui/icons-material/Start";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const BatchOverviewRiskPanel: React.FC = () => {
   const dispatch = useDispatch();
@@ -78,6 +83,7 @@ const BatchOverviewRiskPanel: React.FC = () => {
       (acc, item) => {
         if (item.status === "ADMINISTERED") {
           acc.administered += 1;
+          acc.other += 1;
         } else {
           acc.other += 1;
         }
@@ -163,36 +169,68 @@ const BatchOverviewRiskPanel: React.FC = () => {
             <Grid container spacing={2}>
               <Grid size={12}>
                 <Stack direction={"row"} spacing={2}>
-                  <Stack>
-                    <Typography variant={"body1"} sx={{ pb: 1 }}>
-                      Supply
-                    </Typography>
-                    <Typography variant={"caption"} sx={{ pb: 1 }}>
-                      {counts.administered} Items Administered
-                    </Typography>
-                    <Typography variant={"caption"} sx={{ pb: 1 }}>
-                      {counts.other} Items Manufactured
-                    </Typography>
-                  </Stack>
-                  <Gauge
-                    width={200}
-                    height={100}
-                    value={counts.administered}
-                    valueMax={counts.other + counts.administered}
-                    startAngle={-90}
-                    endAngle={90}
-                    sx={{
-                      [`& .${gaugeClasses.valueText}`]: {
-                        fontSize: 40,
-                        transform: "translate(0px, -10px)",
-                        color: "#FFDB58",
-                      },
-                      [`& .${gaugeClasses.referenceArc}`]: {
-                        fill: "#252525",
-                      },
-                    }}
-                    text={`${((counts.administered / (counts.administered + counts.other)) * 100).toFixed(0)}%`}
-                  />
+                  <Grid container>
+                    <Grid size={6}>
+                      <Typography variant={"body1"}>Supply</Typography>
+                    </Grid>
+                    <Grid size={"auto"}>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        spacing={1}
+                      >
+                        <CircleIcon
+                          sx={{ fontSize: "medium" }}
+                          color={"primary"}
+                        />
+                        <Typography variant={"caption"}>
+                          {counts.administered} Items Administered
+                        </Typography>
+                      </Stack>
+                    </Grid>
+                    <Grid size={"auto"}>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        spacing={1}
+                      >
+                        <CircleIcon
+                          sx={{ fontSize: "medium", color: "#252525" }}
+                        />
+                        <Typography variant={"caption"}>
+                          {counts.other} Items Manufactured
+                        </Typography>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                  <Grid container justifyContent={"center"}>
+                    <Grid size={"auto"}>
+                      <Gauge
+                        width={200}
+                        height={100}
+                        value={counts.administered}
+                        valueMax={counts.other}
+                        startAngle={-90}
+                        endAngle={90}
+                        sx={{
+                          [`& .${gaugeClasses.valueText}`]: {
+                            fontSize: 40,
+                            transform: "translate(0px, -10px)",
+                            color: "#FFDB58",
+                          },
+                          [`& .${gaugeClasses.referenceArc}`]: {
+                            fill: "#252525",
+                          },
+                        }}
+                        text={`${((counts.administered / counts.other) * 100).toFixed(0)}%`}
+                      />
+                    </Grid>
+                    <Grid size={"auto"}>
+                      <Typography variant={"caption"}>
+                        Items Administered
+                      </Typography>
+                    </Grid>
+                  </Grid>
                 </Stack>
               </Grid>
               <Grid size={12}>
@@ -257,37 +295,96 @@ const BatchOverviewRiskPanel: React.FC = () => {
                         </FormControl>
                       </Grid>
                       <Grid size={"auto"}>
-                        <IconButton
-                          onClick={handlePredictSubmit}
-                          disabled={!safetyStock || !manufacturingDelay}
-                        >
-                          <StartIcon color={"primary"} />
-                        </IconButton>
+                        <Tooltip title={"Run Prediction"}>
+                          <IconButton
+                            onClick={handlePredictSubmit}
+                            disabled={!safetyStock || !manufacturingDelay}
+                            sx={{ mb: -0.6 }}
+                          >
+                            <img src={startIcon} alt="" height={35} />
+                          </IconButton>
+                        </Tooltip>
                       </Grid>
-                      <Grid size={12}>
-                        <Paper
-                          sx={{
-                            p: 2,
-                            bgcolor: "#252525 !important",
-                            borderRadius: "4px !important",
-                          }}
-                        >
-                          <Stack justifyContent={"center"}>
-                            <Typography variant={"caption"}>
-                              Current Stock Depletion Rate:{" "}
-                              {prediction?.currentStockDepletionRate}
-                            </Typography>
-                            <br />
-                            <Typography variant={"caption"}>
-                              Recommended Restart Date:{" "}
-                              {prediction?.recommendedRestartDate}
-                            </Typography>
-                            <br />
-                            <Typography variant={"caption"}>
-                              {prediction?.reasoning}
-                            </Typography>
-                          </Stack>
-                        </Paper>
+                      <Grid size={12} sx={{ pt: 1 }}>
+                        <Grid container spacing={2}>
+                          <Grid size={6}>
+                            <Stack direction={"row"} spacing={1}>
+                              <img src={rateIcon} alt="" height={30} />
+                              <Stack>
+                                <Typography
+                                  variant={"caption"}
+                                  sx={{ fontWeight: "bold" }}
+                                >
+                                  Current Stock Depletion Rate
+                                </Typography>
+                                <Typography variant={"caption"}>
+                                  {predictionLoading
+                                    ? "---"
+                                    : prediction?.currentStockDepletionRate}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          </Grid>
+                          <Grid size={6}>
+                            <Stack direction={"row"} spacing={1}>
+                              <img src={calendarIcon} alt="" height={30} />
+                              <Stack>
+                                <Typography
+                                  variant={"caption"}
+                                  sx={{ fontWeight: "bold" }}
+                                >
+                                  Recommended Restart Date
+                                </Typography>
+                                <Typography variant={"caption"}>
+                                  {predictionLoading
+                                    ? "---"
+                                    : prediction?.recommendedRestartDate}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          </Grid>
+                          <Grid size={12}>
+                            <Stack direction={"row"} spacing={1}>
+                              <img src={summaryIcon} alt="" height={30} />
+                              <Stack>
+                                <Typography
+                                  variant={"caption"}
+                                  sx={{ fontWeight: "bold" }}
+                                >
+                                  Summary
+                                </Typography>
+                                <Typography variant={"caption"}>
+                                  {predictionLoading
+                                    ? "---"
+                                    : prediction?.reasoning}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          </Grid>
+                        </Grid>
+                        {/*<Paper*/}
+                        {/*    sx={{*/}
+                        {/*        p: 2,*/}
+                        {/*        bgcolor: "#252525 !important",*/}
+                        {/*        borderRadius: "4px !important",*/}
+                        {/*    }}*/}
+                        {/*>*/}
+                        {/*    <Stack justifyContent={"center"}>*/}
+                        {/*        <Typography variant={"caption"}>*/}
+                        {/*            Current Stock Depletion Rate:{" "}*/}
+                        {/*            {prediction?.currentStockDepletionRate}*/}
+                        {/*        </Typography>*/}
+                        {/*        <br/>*/}
+                        {/*        <Typography variant={"caption"}>*/}
+                        {/*            Recommended Restart Date:{" "}*/}
+                        {/*            {prediction?.recommendedRestartDate}*/}
+                        {/*        </Typography>*/}
+                        {/*        <br/>*/}
+                        {/*        <Typography variant={"caption"}>*/}
+                        {/*            {prediction?.reasoning}*/}
+                        {/*        </Typography>*/}
+                        {/*    </Stack>*/}
+                        {/*</Paper>*/}
                       </Grid>
                     </Grid>
                   </Grid>

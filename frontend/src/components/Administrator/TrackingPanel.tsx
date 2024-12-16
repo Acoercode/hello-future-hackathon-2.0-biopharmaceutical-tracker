@@ -35,7 +35,6 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
       (a, b) => new Date(b.date) - new Date(a.date),
     );
 
-    console.log("details", details);
     return orderedActivities.map((step: any, index: number) => {
       return (
         <Grid size={12} key={`tracking-${index}`}>

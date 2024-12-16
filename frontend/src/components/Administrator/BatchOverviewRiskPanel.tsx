@@ -17,8 +17,6 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
-import Paper from "@mui/material/Paper";
-import StartIcon from "@mui/icons-material/Start";
 import CircleIcon from "@mui/icons-material/Circle";
 
 const BatchOverviewRiskPanel: React.FC = () => {
@@ -257,7 +255,6 @@ const BatchOverviewRiskPanel: React.FC = () => {
                           </Typography>
                           <TextField
                             id="safety stock"
-                            // label="Safety Stock"
                             type="number"
                             name={"safetyStock"}
                             size={"small"}
@@ -279,7 +276,6 @@ const BatchOverviewRiskPanel: React.FC = () => {
                           </Typography>
                           <TextField
                             id="delay"
-                            // label="MFG Delay"
                             type="number"
                             name={"manufacturingDelay"}
                             size={"small"}
@@ -362,29 +358,6 @@ const BatchOverviewRiskPanel: React.FC = () => {
                             </Stack>
                           </Grid>
                         </Grid>
-                        {/*<Paper*/}
-                        {/*    sx={{*/}
-                        {/*        p: 2,*/}
-                        {/*        bgcolor: "#252525 !important",*/}
-                        {/*        borderRadius: "4px !important",*/}
-                        {/*    }}*/}
-                        {/*>*/}
-                        {/*    <Stack justifyContent={"center"}>*/}
-                        {/*        <Typography variant={"caption"}>*/}
-                        {/*            Current Stock Depletion Rate:{" "}*/}
-                        {/*            {prediction?.currentStockDepletionRate}*/}
-                        {/*        </Typography>*/}
-                        {/*        <br/>*/}
-                        {/*        <Typography variant={"caption"}>*/}
-                        {/*            Recommended Restart Date:{" "}*/}
-                        {/*            {prediction?.recommendedRestartDate}*/}
-                        {/*        </Typography>*/}
-                        {/*        <br/>*/}
-                        {/*        <Typography variant={"caption"}>*/}
-                        {/*            {prediction?.reasoning}*/}
-                        {/*        </Typography>*/}
-                        {/*    </Stack>*/}
-                        {/*</Paper>*/}
                       </Grid>
                     </Grid>
                   </Grid>

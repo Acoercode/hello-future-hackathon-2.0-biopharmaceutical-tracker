@@ -10,7 +10,6 @@ import EmojiTransportationIcon from "@mui/icons-material/EmojiTransportation";
 import OutlinedFlagIcon from "@mui/icons-material/OutlinedFlag";
 import SportsScoreIcon from "@mui/icons-material/SportsScore";
 import FlakyIcon from "@mui/icons-material/Flaky";
-import EventIcon from "@mui/icons-material/Event";
 
 export const trackingPanelHelper = (status: string) => {
   switch (status) {

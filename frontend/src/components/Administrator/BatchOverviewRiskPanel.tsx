@@ -147,7 +147,7 @@ const BatchOverviewRiskPanel: React.FC = () => {
               id="product"
               value={product}
               onChange={handleChange}
-              sx={{ bgcolor: "#fff", color: "#0b0b0b" }}
+              sx={{ bgcolor: "#fff", color: "#0d0d0d" }}
               size={"small"}
             >
               <MenuItem value={"Select Product"}>

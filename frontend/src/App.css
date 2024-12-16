@@ -33,7 +33,7 @@
   /* custom styles */
 }
 .react-modal-sheet-container {
-  background-color: #0b0b0b !important;
+  background-color: #0d0d0d !important;
   border-top-left-radius: 30px !important;
   border-top-right-radius: 30px !important;
   /* custom styles */
@@ -45,7 +45,7 @@
   /* custom styles */
 }
 .react-modal-sheet-content {
-  background-color: #0b0b0b;
+  background-color: #0d0d0d;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   /* custom styles */
@@ -91,7 +91,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0b0b0b99; /* Light blurred background */
+  background-color: #0d0d0d99; /* Light blurred background */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,7 +105,7 @@
   width: 100vw;
   height: 100vh;
   /*background-color: rgba(255, 255, 255, 0.3); !* Light blurred background *!*/
-  background-color: #0b0b0b99; /* Light blurred background */
+  background-color: #0d0d0d99; /* Light blurred background */
   /*backdrop-filter: blur(4px); !* Blur effect *!*/
   display: flex;
   justify-content: center;

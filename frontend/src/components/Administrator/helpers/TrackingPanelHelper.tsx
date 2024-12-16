@@ -54,7 +54,7 @@ export const trackingInfoBatchHelper = (status: string) => {
     case "received":
       return ["receiver", "receiverLocation"];
     default:
-      return ["location"];
+      return [""];
   }
 };
 
@@ -75,61 +75,61 @@ export const trackingStepIcon = (status: string, index: number) => {
   switch (status) {
     case "manufacturer":
       return (
-        <FactoryIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <FactoryIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "location":
-      return <PlaceIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />;
+      return <PlaceIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />;
     case "qcStation":
-      return <FlakyIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />;
+      return <FlakyIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />;
     case "qcInspectorId":
       return (
-        <PersonSearchIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <PersonSearchIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "carrier":
       return (
         <EmojiTransportationIcon
-          sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }}
+          sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
         />
       );
     case "trackingId":
       return (
-        <GpsFixedIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <GpsFixedIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "transportMode":
       return (
         <LocalShippingIcon
-          sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }}
+          sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
         />
       );
     case "originAddress":
       return (
-        <OutlinedFlagIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <OutlinedFlagIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "destinationAddress":
       return (
-        <SportsScoreIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <SportsScoreIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "receiver":
       return (
-        <AccountBoxIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />
+        <AccountBoxIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />
       );
     case "receiverLocation":
-      return <PlaceIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />;
+      return <PlaceIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />;
     case "healthcareFacilityName":
       return (
         <LocalHospitalIcon
-          sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }}
+          sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
         />
       );
     case "healthcareFacilityLocation":
-      return <PlaceIcon sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }} />;
+      return <PlaceIcon sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }} />;
     case "healthcareProvider":
       return (
         <MedicalInformationIcon
-          sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }}
+          sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
         />
       );
     default:
-      return <EventIcon sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }} />;
+      return null;
   }
 };

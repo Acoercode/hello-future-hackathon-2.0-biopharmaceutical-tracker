@@ -35,6 +35,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
       (a, b) => new Date(b.date) - new Date(a.date),
     );
 
+    console.log("details", details);
     return orderedActivities.map((step: any, index: number) => {
       return (
         <Grid size={12} key={`tracking-${index}`}>
@@ -47,14 +48,14 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
             <Grid container alignItems={"center"}>
               <Grid size={2}>
                 <EventIcon
-                  sx={{ color: index === 0 ? "#0b0b0b" : "#FFDB58" }}
+                  sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
                 />
               </Grid>
               <Grid size={10}>
                 <Stack>
                   <Typography
                     sx={{
-                      color: index === 0 ? "#0b0b0b" : "#fff",
+                      color: index === 0 ? "#0d0d0d" : "#fff",
                       fontWeight: "bold",
                     }}
                   >
@@ -62,7 +63,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                       ? "Administered"
                       : trackingPanelHelper(step.status.toLowerCase())}
                   </Typography>
-                  <Typography sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}>
+                  <Typography sx={{ color: index === 0 ? "#0d0d0d" : "#fff" }}>
                     {utils.formatDate(step.date)}
                   </Typography>
                 </Stack>
@@ -83,7 +84,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                             <Stack key={i}>
                               <Typography
                                 sx={{
-                                  color: index === 0 ? "#0b0b0b" : "#fff",
+                                  color: index === 0 ? "#0d0d0d" : "#fff",
                                   fontWeight: "bold",
                                 }}
                               >
@@ -92,11 +93,32 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                                   .replace("Qc", "QC")
                                   .replace("Id", "ID")}
                               </Typography>
-                              <Typography
-                                sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                              >
-                                {step[info]}
-                              </Typography>
+                              {info.toLowerCase() === "manufacturer" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.brand}
+                                </Typography>
+                              ) : step.status.toLowerCase() ===
+                                  "manufactured" && info === "location" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.location}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {step[info]}
+                                </Typography>
+                              )}
                             </Stack>
                           </Grid>
                         </Grid>
@@ -118,7 +140,7 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                             <Stack key={i}>
                               <Typography
                                 sx={{
-                                  color: index === 0 ? "#0b0b0b" : "#fff",
+                                  color: index === 0 ? "#0d0d0d" : "#fff",
                                   fontWeight: "bold",
                                 }}
                               >
@@ -127,11 +149,32 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                                   .replace("Qc", "QC")
                                   .replace("Id", "ID")}
                               </Typography>
-                              <Typography
-                                sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                              >
-                                {step[info]}
-                              </Typography>
+                              {info.toLowerCase() === "manufacturer" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.brand}
+                                </Typography>
+                              ) : step.status.toLowerCase() ===
+                                  "manufactured" && info === "location" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.location}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {step[info]}
+                                </Typography>
+                              )}
                             </Stack>
                           </Grid>
                         </Grid>

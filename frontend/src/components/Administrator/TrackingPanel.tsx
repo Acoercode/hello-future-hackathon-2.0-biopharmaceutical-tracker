@@ -154,7 +154,10 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                                     color: index === 0 ? "#0d0d0d" : "#fff",
                                   }}
                                 >
-                                  {details.brand}
+                                  {(details &&
+                                    details.batch &&
+                                    details.batch.brand) ||
+                                    "---"}
                                 </Typography>
                               ) : step.status.toLowerCase() ===
                                   "manufactured" && info === "location" ? (
@@ -163,7 +166,10 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
                                     color: index === 0 ? "#0d0d0d" : "#fff",
                                   }}
                                 >
-                                  {details.location}
+                                  {(details &&
+                                    details.batch &&
+                                    details.batch.location) ||
+                                    "---"}
                                 </Typography>
                               ) : (
                                 <Typography

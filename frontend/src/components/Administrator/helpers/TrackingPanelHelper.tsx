@@ -65,6 +65,8 @@ export const trackingInfoItemHelper = (status: string) => {
         "healthcareFacilityLocation",
         "healthcareProvider",
       ];
+    case "manufactured":
+      return ["manufacturer", "location"];
     default:
       return ["location"];
   }

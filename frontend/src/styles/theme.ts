@@ -73,6 +73,13 @@ export const getDesignTokens = (mode: string) => ({
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          textAlign: `center`,
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         outlinedPrimary: {

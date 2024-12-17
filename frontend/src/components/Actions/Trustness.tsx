@@ -54,7 +54,7 @@ const Trustness: React.FC<TrustnessProps> = ({
   }) => {
     e.preventDefault();
     e.stopPropagation(); // Prevent the click event from bubbling up
-    const transactionUrl = `https://hederaexplorer.io/search-details/transaction/${txId}`;
+    const transactionUrl = `https://testnet.hederaexplorer.io/search-details/transaction/${txId}`;
     window.open(transactionUrl, "_blank", "noopener,noreferrer");
   };
 

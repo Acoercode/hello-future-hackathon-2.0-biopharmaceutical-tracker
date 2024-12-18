@@ -17,18 +17,22 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import utils from "../../utils/utils";
+import { unitStatusUpdates } from "./helpers/unitStatusUpdates";
 
 interface OperatorBottomSheetProps {
   data: any;
   handleSubmit: any;
+  type: string;
 }
 
 const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   data,
   handleSubmit,
+  type,
 }) => {
   const ref = useRef<SheetRef>();
   const batchDetails = useSelector((state: any) => state.admin.batchDetails);
+  const itemDetails = useSelector((state: any) => state.admin.itemDetails);
   const recordedActivity = useSelector(
     (state: any) => state.operator.recordedActivity,
   );
@@ -108,7 +112,20 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
   }, [locationGeo]);
 
   useEffect(() => {
-    if (batchDetails && batchDetails.status) {
+    if (
+      batchDetails &&
+      (batchDetails.status === "RECEIVED" ||
+        batchDetails.status === "ADMINISTERING" ||
+        batchDetails.status === "ADMINISTERED")
+    ) {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      batchDetails &&
+      batchDetails.status &&
+      batchDetails.status !== "RECEIVED"
+    ) {
       const statusInputs = batchStatusUpdates.filter(
         (item) =>
           item.previousStatus.toLowerCase() ===
@@ -119,6 +136,32 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchDetails]);
+
+  useEffect(() => {
+    if (itemDetails && itemDetails.status === "ADMINISTERED") {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      itemDetails &&
+      itemDetails.batch &&
+      itemDetails.batch.status &&
+      itemDetails.batch.status !== "ADMINISTERING" &&
+      itemDetails.batch.status !== "RECEIVED"
+    ) {
+      setStatusInputs([]);
+      setInputData({});
+      snapTo(2);
+    } else if (
+      itemDetails &&
+      itemDetails.status &&
+      itemDetails.status !== "ADMINISTERED"
+    ) {
+      setStatusInputs(unitStatusUpdates);
+      createInputData(unitStatusUpdates[0].inputs, unitStatusUpdates);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemDetails]);
 
   const createInputData = (fields: any, data: any) => {
     const currentDate = new Date();
@@ -165,27 +208,53 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
     >
       <Grid size={"auto"}>
         <Typography variant={"h6"}>Current Status</Typography>
-        <Typography variant={"body1"}>
-          #
-          {recordedActivity
-            ? recordedActivity.productId
-            : data && data.productId}
-        </Typography>
-        {/*<Typography variant={"body1"}>{utils.capsToTitleCase(data.brand)}</Typography>*/}
-        {/*<Typography variant={"body1"}>{utils.capsToTitleCase(data.productType)}</Typography>*/}
+        {data && data.productType && data.brand && (
+          <Typography variant={"body1"}>
+            {utils.capsToTitleCase(data.productType)} -{" "}
+            {utils.capsToTitleCase(data.brand)}
+          </Typography>
+        )}
+        {type === "batch" && (
+          <Typography variant={"body1"}>
+            #
+            {recordedActivity
+              ? recordedActivity.productId
+              : data && `${data.productId}`}
+          </Typography>
+        )}
+        {type === "item" && (
+          <Typography variant={"body1"}>
+            #
+            {recordedActivity
+              ? recordedActivity.batch &&
+                `${recordedActivity.batch.productId}-${recordedActivity.itemNumber}`
+              : itemDetails &&
+                itemDetails.batch &&
+                `${itemDetails.batch.productId}-${itemDetails.itemNumber}`}
+          </Typography>
+        )}
       </Grid>
       <Grid size={"auto"}>
-        <Chip
-          label={
-            recordedActivity
-              ? recordedActivity.status
-              : batchDetails && batchDetails.status
-                ? batchDetails.status
-                : "---"
-          }
-          color={"primary"}
-          sx={{ fontWeight: "bold" }}
-        />
+        {type === "batch" && (
+          <Chip
+            label={
+              recordedActivity
+                ? recordedActivity.status
+                : batchDetails && batchDetails.status
+                  ? batchDetails.status
+                  : "---"
+            }
+            color={"primary"}
+            sx={{ fontWeight: "bold" }}
+          />
+        )}
+        {type === "item" && (
+          <Chip
+            label={recordedActivity ? recordedActivity.status : "RECEIVED"}
+            color={"primary"}
+            sx={{ fontWeight: "bold" }}
+          />
+        )}
       </Grid>
       <Grid size={12}>
         <Divider color={"gray"} />
@@ -344,9 +413,91 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   {renderRecordedActivity()}
                 </Stack>
               )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
+                batchDetails.status === "RECEIVED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Batch Received</Typography>
+                    <Typography>
+                      The batch has been received and is awaiting
+                      administration.
+                    </Typography>
+                    <Typography>
+                      Please scan an item in the batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
+                batchDetails.status === "ADMINISTERING" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>
+                      Batch Administration in Process
+                    </Typography>
+                    <Typography>
+                      This batch is in the process of administration.
+                    </Typography>
+                    <Typography>
+                      Please scan an item in the batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "batch" &&
+                data &&
+                batchDetails &&
+                batchDetails.status === "ADMINISTERED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Batch Administered</Typography>
+                    <Typography>
+                      The batch has completed item administration.
+                    </Typography>
+                    <Typography>
+                      Please scan a different batch to update its status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "item" &&
+                data &&
+                itemDetails &&
+                itemDetails.status === "ADMINISTERED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>Item Administered</Typography>
+                    <Typography>
+                      This item has already been administered.
+                    </Typography>
+                    <Typography>
+                      Please scan another item in the batch to update its
+                      status.
+                    </Typography>
+                  </Stack>
+                )}
+              {type === "item" &&
+                data &&
+                itemDetails &&
+                itemDetails.status !== "ADMINISTERED" &&
+                itemDetails.batch &&
+                itemDetails.batch.status &&
+                itemDetails.batch.status !== "ADMINISTERING" &&
+                itemDetails.batch.status !== "RECEIVED" && (
+                  <Stack sx={{ p: 2 }} spacing={2}>
+                    <Typography variant={"h6"}>
+                      Item Not Administering
+                    </Typography>
+                    <Typography>
+                      This item is not available for administration.
+                    </Typography>
+                    <Typography>
+                      Please scan another item in the batch to update its
+                      status.
+                    </Typography>
+                  </Stack>
+                )}
               {data &&
                 (!batchDetails || !batchDetails.status) &&
-                !recordedActivity && (
+                !recordedActivity &&
+                !itemDetails && (
                   <svg
                     className="checkmark"
                     xmlns="http://www.w3.org/2000/svg"
@@ -367,9 +518,21 @@ const OperatorBottomSheet: React.FC<OperatorBottomSheetProps> = ({
                   </svg>
                 )}
               {data &&
-                batchDetails &&
-                batchDetails.status &&
-                !recordedActivity && (
+                ((type === "item" &&
+                  itemDetails &&
+                  itemDetails.status &&
+                  itemDetails.status !== "ADMINISTERED" &&
+                  itemDetails.batch &&
+                  (itemDetails.batch.status === "ADMINISTERING" ||
+                    itemDetails.batch.status === "RECEIVED") &&
+                  !recordedActivity) ||
+                  (type === "batch" &&
+                    batchDetails &&
+                    batchDetails.status &&
+                    batchDetails.status !== "RECEIVED" &&
+                    batchDetails.status !== "ADMINISTERED" &&
+                    batchDetails.status !== "ADMINISTERING" &&
+                    !recordedActivity)) && (
                   <Stack sx={{ p: 2 }} spacing={2}>
                     {renderHeader}
                     {renderUpdates()}

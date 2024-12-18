@@ -20,7 +20,7 @@ export const recordActivity: ActionCreator<
   // @ts-ignore
   ThunkAction<Promise<any>, IOperatorState, null, IOperatorAction>
 > =
-  (batchId: string, data: any, itemId?: string) =>
+  (type: string, batchId: string, data: any, itemId?: string) =>
   async (
     dispatch: (arg0: {
       type: string;
@@ -32,10 +32,17 @@ export const recordActivity: ActionCreator<
       type: types.RECORD_ACTIVITY_REQUEST,
     });
 
+    let url = "";
+    if (type === "item") {
+      url = `${API_ROOT}/batches/${batchId}/items/${itemId}/activity`;
+    } else if (type === "batch") {
+      url = `${API_ROOT}/batches/${batchId}/activity`;
+    }
+
     try {
       const response = await axios({
         method: "POST",
-        url: `${API_ROOT}/batches/${batchId}/activity`,
+        url,
         data,
       });
 

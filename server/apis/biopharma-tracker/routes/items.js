@@ -94,34 +94,49 @@ router.post("/:itemId/activity", async (req, res, next) => {
         if (!!batchItem.status && batchItem.status !== 'ADMINISTERED' && !!payload.status && payload.status === 'ADMINISTERED') {
             const updatedBatch = await addItemActivity(batchItem, payload);
             const stamp = await stampData(updatedBatch, COLLECTION, payload.status);
-            let stamped = await updateBatchItem(batchId, itemId, { stamp });
+            let stamped = await updateBatchItem(batchId, itemId, {
+                stamp: {
+                    ...stamp,
+                    stampedData: JSON.stringify(updatedBatch)
+                }
+            });
             console.log('Stamped batch item', stamped);
 
             // Check batch
-            const administeredCount = await count(batchId, {status: 'ADMINISTERED'});
-            
-            if(administeredCount > 0) {
+            const administeredCount = await count(batchId, { status: 'ADMINISTERED' });
+
+            if (administeredCount > 0) {
                 const batch = await getBatch(batchId);
 
-                if(!batch) {
+                if (!batch) {
                     return res.status(404).json({
                         error: 'Parent batch not found.'
                     });
                 }
 
-                if(batch.numberOfItems == administeredCount) {
+                if (batch.numberOfItems == administeredCount) {
                     // Update batch
                     const payload = { status: 'ADMINISTERED' };
                     const updatedBatch = await addBatchActivity(batch, payload);
                     const batchStamp = await stampData(updatedBatch, BATCH_COLLECTION, payload.status);
-                    await updateBatch(batchId, { stamp: batchStamp });
+                    await updateBatch(batchId, {
+                        stamp: {
+                            ...batchStamp,
+                            stampedData: JSON.stringify(updatedBatch)
+                        }
+                    });
                     stamped = await getBatchItem(batchId, itemId);
                     console.log('Stamped batch');
                 } else if (batch.status !== 'ADMINISTERING') {
                     const payload = { status: 'ADMINISTERING' };
                     const updatedBatch = await addBatchActivity(batch, payload);
                     const batchStamp = await stampData(updatedBatch, BATCH_COLLECTION, payload.status);
-                    await updateBatch(batchId, { stamp: batchStamp });
+                    await updateBatch(batchId, {
+                        stamp: {
+                            ...batchStamp,
+                            stampedData: JSON.stringify(updatedBatch)
+                        }
+                    });
                     stamped = await getBatchItem(batchId, itemId);
                     console.log('Stamped batch');
                 }

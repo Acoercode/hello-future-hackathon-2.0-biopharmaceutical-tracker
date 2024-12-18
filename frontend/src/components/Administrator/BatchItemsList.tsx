@@ -18,11 +18,13 @@ import QrCodeDialog from "./QrCodeDialog";
 interface BatchItemsListProps {
   items: any;
   setSelectedItemId: (id: string) => void;
+  details: any;
 }
 
 const BatchItemsList: React.FC<BatchItemsListProps> = ({
   items,
   setSelectedItemId,
+  details,
 }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -43,22 +45,23 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
       itemIds.forEach((itemId: any) => {
         dispatch(adminActions?.checkTrustness(id, itemId));
       });
+
+      const itemNumber = items.map(
+        (item: { itemNumber: any }) => item.itemNumber,
+      );
+      itemIds.forEach((itemId: any, index: number) => {
+        dispatch(adminActions?.getBatchQrCode(id, itemId, itemNumber[index]));
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
   const handleItemQrCodes = () => {
-    const itemIds = items.map((item: { _id: any }) => item._id);
-    itemIds.forEach((itemId: any) => {
-      dispatch(adminActions?.getBatchQrCode(id, itemId));
-    });
-
     setOpenQr(true);
   };
 
   const handleCloseDialog = () => {
     setOpenQr(false);
-    dispatch(adminActions?.clearQrCodes());
   };
 
   const columns = [
@@ -175,7 +178,12 @@ const BatchItemsList: React.FC<BatchItemsListProps> = ({
           options={options}
         />
       </Grid>
-      <QrCodeDialog open={openQr} handleClose={handleCloseDialog} />
+      <QrCodeDialog
+        open={openQr}
+        handleClose={handleCloseDialog}
+        details={details}
+        type={"item"}
+      />
     </Grid>
   );
 };

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 // components and helpers
 import { adminActions } from "./AdminActions";
 import TrackingPanel from "./TrackingPanel";
-import DetailsPanel from "./DetailsPanel";
 import DetailsMapPanel from "./DetailsMapPanel";
 import Trustness from "../Actions/Trustness";
 
@@ -16,6 +15,7 @@ import { Divider, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 
 interface ItemDetailsDialogProps {
   open: boolean;
@@ -30,6 +30,7 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const itemQrCodes = useSelector((state: any) => state.admin.itemQrCodes);
   const itemDetails = useSelector((state: any) => state.admin.itemDetails);
   const trustData = useSelector((state: any) => state.admin.trustData);
   const trustDataLoading = useSelector(
@@ -68,7 +69,7 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
           <Stack spacing={1}>
             <Stack direction={"row"} spacing={2}>
               <Typography variant={"h6"} sx={{ fontWeight: "bold" }}>
-                Unit Tracking
+                Item Tracking
               </Typography>
               <Trustness
                 type="file"
@@ -89,8 +90,9 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
               />
             </Stack>
             <Typography>
-              # {itemDetails && itemDetails.batch.productId} -{" "}
-              {itemDetails && itemDetails.itemNumber}
+              #{" "}
+              {itemDetails && itemDetails.batch && itemDetails.batch.productId}{" "}
+              - {itemDetails && itemDetails.itemNumber}
             </Typography>
           </Stack>
         </Grid>
@@ -114,12 +116,71 @@ const ItemDetailsDialog: React.FC<ItemDetailsDialogProps> = ({
         sx={{ backgroundColor: "#252525", p: 3 }}
       >
         <Grid size={{ xs: 12, md: 3.5 }}>
-          <TrackingPanel details={itemDetails} title={"Unit Tracking"} />
+          <TrackingPanel
+            details={itemDetails}
+            title={"Item Tracking"}
+            type={"item"}
+          />
         </Grid>
         <Grid size={{ xs: 12, md: 8.5 }}>
           <Grid container justifyContent={"center"} spacing={2}>
             <Grid size={12}>
-              <DetailsPanel details={itemDetails} title={"Unit Details"} />
+              {/*<DetailsPanel details={itemDetails} title={"Unit Details"} />*/}
+              <Paper sx={{ p: 2 }}>
+                <Grid container spacing={2}>
+                  <Grid size={12}>
+                    <Grid
+                      container
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                    >
+                      <Grid size={"auto"}>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          spacing={2}
+                        >
+                          <Typography
+                            variant={"h6"}
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Item Details
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid size={12}>
+                    <Divider color={"#fff"} />
+                  </Grid>
+                  <Grid size={12}>
+                    <Grid
+                      container
+                      justifyContent={"center"}
+                      spacing={2}
+                      sx={{ backgroundColor: "#252525", p: 3 }}
+                    >
+                      <Stack>
+                        <img
+                          src={
+                            itemQrCodes &&
+                            itemQrCodes[itemId] &&
+                            itemQrCodes[itemId].qrCode
+                          }
+                          alt="QR Code"
+                          height={200}
+                        />
+                        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                          #{" "}
+                          {itemQrCodes &&
+                            itemQrCodes[itemId] &&
+                            itemQrCodes[itemId].itemNumber}
+                        </Typography>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Paper>
             </Grid>
             <Grid size={12}>
               <DetailsMapPanel />

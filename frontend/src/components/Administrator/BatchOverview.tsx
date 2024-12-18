@@ -119,13 +119,13 @@ const BatchOverview: React.FC = () => {
   const statusData = [
     {
       title: "Batches Manufactured",
-      color: "#0b0b0b",
+      color: "#0d0d0d",
       data: manufacturedCount,
       image: manufacturedIcon,
     },
     {
       title: "Batches Administered",
-      color: "#0b0b0b",
+      color: "#0d0d0d",
       data: administeredCount,
       image: administeredIcon,
     },
@@ -271,7 +271,7 @@ const BatchOverview: React.FC = () => {
                 <Button
                   variant={"contained"}
                   sx={{ fontWeight: "bold" }}
-                  startIcon={<AddIcon sx={{ color: "#0b0b0b !important" }} />}
+                  startIcon={<AddIcon sx={{ color: "#0d0d0d !important" }} />}
                   onClick={() => navigate("/admin/create")}
                 >
                   Create New Batch

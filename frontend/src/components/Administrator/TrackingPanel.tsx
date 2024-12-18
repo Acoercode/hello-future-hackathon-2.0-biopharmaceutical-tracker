@@ -1,6 +1,13 @@
 import React from "react";
 
 // components and helpers
+import {
+  trackingInfoBatchHelper,
+  trackingInfoItemHelper,
+  trackingPanelHelper,
+  trackingStepIcon,
+} from "./helpers/TrackingPanelHelper";
+import utils from "../../utils/utils";
 
 // mui
 import Grid from "@mui/material/Grid2";
@@ -8,114 +15,25 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import StepConnector, {
-  stepConnectorClasses,
-} from "@mui/material/StepConnector";
-import { StepIconProps } from "@mui/material/StepIcon";
-import { styled } from "@mui/material/styles";
-import { trackingPanelHelper } from "./helpers/TrackingPanelHelper";
-import utils from "../../utils/utils";
-
-interface QontoConnectorProps {
-  level: number;
-}
-
-const QontoConnector = styled(StepConnector, {
-  shouldForwardProp: (prop) => prop !== "level", // Prevent `level` from being passed to the DOM
-})<QontoConnectorProps>(({ theme, level }) => ({
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: level === 0 ? "#0b0b0b" : "#fff",
-    },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: level === 0 ? "#0b0b0b" : "#fff",
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderColor: theme.palette.grey[500],
-    borderTopWidth: 3,
-    borderRadius: 1,
-    marginLeft: -8,
-    marginTop: -20,
-    height: 50,
-    marginBottom: -20,
-    ...theme.applyStyles("dark", {
-      borderColor: theme.palette.grey[800],
-    }),
-  },
-}));
-
-const QontoStepIconRoot = styled("div")<{
-  ownerState: { active?: boolean };
-  level: number;
-}>(({ theme, ownerState, level }) => ({
-  color: level === 0 ? "#0b0b0b" : "#fff",
-  display: "flex",
-  height: 22,
-  alignItems: "center",
-  marginRight: 20,
-  "& .QontoStepIcon-completedIcon": {
-    color: level === 0 ? "#0b0b0b" : "#fff",
-    zIndex: 1,
-    fontSize: 18,
-    marginRight: 20,
-  },
-  "& .QontoStepIcon-circle": {
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    backgroundColor: level === 0 ? "#0b0b0b" : "#fff",
-    marginRight: 20,
-  },
-  ...theme.applyStyles("dark", {
-    color: theme.palette.grey[700],
-  }),
-  ...(ownerState.active && {
-    color: theme.palette.success.main, // Custom style when active
-  }),
-}));
-
-function QontoStepIcon(props: StepIconProps, index: number) {
-  const { active, className } = props;
-
-  return (
-    <QontoStepIconRoot
-      ownerState={{ active }}
-      className={className}
-      level={index}
-    >
-      <div className="QontoStepIcon-circle" />
-    </QontoStepIconRoot>
-  );
-}
+import EventIcon from "@mui/icons-material/Event";
 
 interface BatchTrackingPanelProps {
   details: any;
   title: string;
+  type: string;
 }
 
 const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
   details,
   title,
+  type,
 }) => {
   const renderTrackingCard = () => {
     let orderedActivities = [];
-    if (title.includes("Batch")) {
-      orderedActivities = [...(details.activities || [])].sort(
-        // @ts-ignore
-        (a, b) => new Date(b.date) - new Date(a.date),
-      );
-    } else {
-      orderedActivities = [...(details.batch.activities || [])].sort(
-        // @ts-ignore
-        (a, b) => new Date(b.date) - new Date(a.date),
-      );
-    }
+    orderedActivities = [...(details.activities || [])].sort(
+      // @ts-ignore
+      (a, b) => new Date(b.date) - new Date(a.date),
+    );
 
     return orderedActivities.map((step: any, index: number) => {
       return (
@@ -126,61 +44,156 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
               bgcolor: index > 0 ? "#252525 !important" : "#FFDB58 !important",
             }}
           >
-            <Stack sx={{ width: "100%" }} spacing={4}>
-              <Stepper
-                activeStep={1}
-                connector={<QontoConnector level={index} />}
-                orientation={"vertical"}
-              >
-                <Step>
-                  <StepLabel StepIconComponent={(e) => QontoStepIcon(e, index)}>
-                    <Stack>
-                      <Typography
-                        sx={{
-                          color: index === 0 ? "#0b0b0b" : "#fff",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {trackingPanelHelper(step.status.toLowerCase())}
-                      </Typography>
-                      <Typography
-                        sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                      >
-                        {utils.formatDate(step.date)}
-                      </Typography>
-                    </Stack>
-                  </StepLabel>
-                </Step>
-                <Step>
-                  <StepLabel StepIconComponent={(e) => QontoStepIcon(e, index)}>
-                    <Stack>
-                      <Typography
-                        sx={{
-                          color: index === 0 ? "#0b0b0b" : "#fff",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Location
-                      </Typography>
-                      <Typography
-                        sx={{ color: index === 0 ? "#0b0b0b" : "#fff" }}
-                      >
-                        {step.location ||
-                          step.receiverLocation ||
-                          step.originAddress}
-                      </Typography>
-                    </Stack>
-                  </StepLabel>
-                </Step>
-              </Stepper>
-            </Stack>
+            <Grid container alignItems={"center"}>
+              <Grid size={2}>
+                <EventIcon
+                  sx={{ color: index === 0 ? "#0d0d0d" : "#FFDB58" }}
+                />
+              </Grid>
+              <Grid size={10}>
+                <Stack>
+                  <Typography
+                    sx={{
+                      color: index === 0 ? "#0d0d0d" : "#fff",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {title.includes("Item") && step.status === "ADMINISTERED"
+                      ? "Administered"
+                      : trackingPanelHelper(step.status.toLowerCase())}
+                  </Typography>
+                  <Typography sx={{ color: index === 0 ? "#0d0d0d" : "#fff" }}>
+                    {utils.formatDate(step.date)}
+                  </Typography>
+                </Stack>
+              </Grid>
+              <Grid size={12}>
+                {type === "batch" &&
+                  trackingInfoBatchHelper(step.status.toLowerCase()).map(
+                    (info, i) => {
+                      return (
+                        <Grid
+                          container
+                          alignItems={"center"}
+                          spacing={2}
+                          sx={{ pt: 2 }}
+                        >
+                          <Grid size={2}>{trackingStepIcon(info, index)}</Grid>
+                          <Grid size={10}>
+                            <Stack key={i}>
+                              <Typography
+                                sx={{
+                                  color: index === 0 ? "#0d0d0d" : "#fff",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {utils
+                                  .toTitleText(info)
+                                  .replace("Qc", "QC")
+                                  .replace("Id", "ID")}
+                              </Typography>
+                              {info.toLowerCase() === "manufacturer" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.brand}
+                                </Typography>
+                              ) : step.status.toLowerCase() ===
+                                  "manufactured" && info === "location" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {details.location}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {step[info]}
+                                </Typography>
+                              )}
+                            </Stack>
+                          </Grid>
+                        </Grid>
+                      );
+                    },
+                  )}
+                {type === "item" &&
+                  trackingInfoItemHelper(step.status.toLowerCase()).map(
+                    (info, i) => {
+                      return (
+                        <Grid
+                          container
+                          alignItems={"center"}
+                          spacing={2}
+                          sx={{ pt: 2 }}
+                        >
+                          <Grid size={2}>{trackingStepIcon(info, index)}</Grid>
+                          <Grid size={10}>
+                            <Stack key={i}>
+                              <Typography
+                                sx={{
+                                  color: index === 0 ? "#0d0d0d" : "#fff",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {utils
+                                  .toTitleText(info)
+                                  .replace("Qc", "QC")
+                                  .replace("Id", "ID")}
+                              </Typography>
+                              {info.toLowerCase() === "manufacturer" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {(details &&
+                                    details.batch &&
+                                    details.batch.brand) ||
+                                    "---"}
+                                </Typography>
+                              ) : step.status.toLowerCase() ===
+                                  "manufactured" && info === "location" ? (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {(details &&
+                                    details.batch &&
+                                    details.batch.location) ||
+                                    "---"}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    color: index === 0 ? "#0d0d0d" : "#fff",
+                                  }}
+                                >
+                                  {step[info]}
+                                </Typography>
+                              )}
+                            </Stack>
+                          </Grid>
+                        </Grid>
+                      );
+                    },
+                  )}
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       );
     });
   };
 
-  console.log("details", details);
   return (
     <Paper sx={{ p: 2, height: "100%" }}>
       <Grid container spacing={2}>
@@ -214,34 +227,17 @@ const TrackingPanel: React.FC<BatchTrackingPanelProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        {title.includes("Batch") ? (
-          <Grid size={12}>
-            {details && details.activities && details.activities.length > 0 ? (
-              <Grid container spacing={2}>
-                {renderTrackingCard()}
-              </Grid>
-            ) : (
-              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
-                No tracking data available
-              </Typography>
-            )}
-          </Grid>
-        ) : (
-          <Grid size={12}>
-            {details &&
-            details.batch &&
-            details.batch.activities &&
-            details.batch.activities.length > 0 ? (
-              <Grid container spacing={2}>
-                {renderTrackingCard()}
-              </Grid>
-            ) : (
-              <Typography variant={"body1"} sx={{ textAlign: "center" }}>
-                No tracking data available
-              </Typography>
-            )}
-          </Grid>
-        )}
+        <Grid size={12}>
+          {details && details.activities && details.activities.length > 0 ? (
+            <Grid container spacing={2}>
+              {renderTrackingCard()}
+            </Grid>
+          ) : (
+            <Typography variant={"body1"} sx={{ textAlign: "center" }}>
+              No tracking data available
+            </Typography>
+          )}
+        </Grid>
       </Grid>
     </Paper>
   );

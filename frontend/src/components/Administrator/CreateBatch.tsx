@@ -79,7 +79,7 @@ const CreateBatch: React.FC = () => {
                   value={batchDetails[input.id as keyof BatchDetails]}
                   sx={{ backgroundColor: "#fff", borderRadius: 2 }}
                   placeholder={input.placeholder}
-                  inputProps={{ style: { color: "#0b0b0b" } }}
+                  inputProps={{ style: { color: "#0d0d0d" } }}
                 />
               </Grid>
             ))}

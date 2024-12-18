@@ -24,6 +24,7 @@ const BatchDetails: React.FC = () => {
   useEffect(() => {
     dispatch(adminActions?.getBatchDetails(id));
     dispatch(adminActions?.getBatchItems(id));
+    return () => dispatch(adminActions?.clearQrCodes());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -35,7 +36,11 @@ const BatchDetails: React.FC = () => {
   return (
     <Grid container justifyContent={"center"} spacing={2} sx={{ mb: 2 }}>
       <Grid size={{ xs: 12, md: 3.5 }}>
-        <TrackingPanel details={batchDetails} title={"Batch Tracking"} />
+        <TrackingPanel
+          details={batchDetails}
+          title={"Batch Tracking"}
+          type={"batch"}
+        />
       </Grid>
       <Grid size={{ xs: 12, md: 8.5 }}>
         <Grid container justifyContent={"center"} spacing={2}>
@@ -46,6 +51,7 @@ const BatchDetails: React.FC = () => {
             <BatchItemsList
               items={batchItems}
               setSelectedItemId={handleRowClick}
+              details={batchDetails}
             />
           </Grid>
           <Grid size={12}>

@@ -79,9 +79,9 @@ This integration allows us to timestamp and verify data entries effortlessly, en
 Overall, the integration of ACOER Data Stamping APIs with Hedera DLT underscores our commitment to building a secure, transparent, and efficient biopharmaceutical supply chain solution. By ensuring data integrity and protecting sensitive information, BioPharma Tracker stands as a trustworthy tool for managing the complexities of the biopharmaceutical industry.
 
 Example of transaction:
-* Related to a batch: https://hederaexplorer.io/search-details/transaction/0.0.34776@1733340452.291364366
-* Related to a batch item: https://hederaexplorer.io/search-details/transaction/0.0.34776@1734083850.978006484
-* Related to an AI prediction: https://hederaexplorer.io/search-details/transaction/0.0.34776-1734084349-732569148
+* Related to a batch: https://testnet.hederaexplorer.io/search-details/transaction/0.0.5275007@1734469442.251201799
+* Related to a batch item: https://testnet.hederaexplorer.io/search-details/transaction/0.0.5275007@1734469439.267466516
+* Related to an AI prediction: https://testnet.hederaexplorer.io/search-details/transaction/0.0.5275007-1734468694-325674006
 
 ### Frontend Implementation
 
@@ -178,7 +178,7 @@ By following these steps, you can fully explore the functionalities of BioPharma
 
 ## Demo
 
-ADD VIDEO !!!
+[YouTube Video](https://www.youtube.com/watch?v=szKSZIJIMhg)
 
 ## Architecture
 
